@@ -5,12 +5,6 @@
 
 (define (show tag thing) (print (cons tag thing)) thing)
 
-; (list 'random (random 1 10) (random 1 2) (random 1 234))
-; (list 'chosen (random-ref '(a b c d e f)))
-; (list 'nope)
-; (show 'showtest 'showdatum)
-
-
 ; TODO:
 
 ; Attributes need to have constraints -- such as a list of colours to choose from, possibly with possibilities.
@@ -175,17 +169,16 @@
           ; 10 isn't meant to be realistic.  It's meant to be ridiculous as a way of showing that something is wrong in the picture.
           [height (lookup 'height a (lambda () 10))]
           [style (lookup 'style a (lambda () 'paned))]
-          [background (make-color 80 120 100)]
 	)
      ; (show 'framed style) (show 'width width) (show 'height height)
-        (cond
-          [ (eq? style 'framed)
+        (match style
+          [ 'framed
 	    ( pin-over
 	      (filled-rectangle (* width 1.00) (* height 1.00 ) #:color "red")
 	      ( * width 0.05 ) ( * height 0.05 )
-	      (filled-rectangle (* width 0.90) (* height 0.90 ) #:color background)
+	      (filled-rectangle (* width 0.90) (* height 0.90 ) #:color "black")
 	  )]
-          [ (eq? style 'paned)
+          [ 'paned
             ( pin-over
                   (filled-rectangle (* width 1.00) (* height 1.00 ) #:color "red")
                   ( * width 0.05 ) ( * height 0.05 )
@@ -193,8 +186,8 @@
                     ((vert (list (hor (list (w) (w))) (hor (list (w) (w))))) a)
                   )
           )]
-          [ (eq? style 'plain)
-              (filled-rectangle (* width 1.00) (* height 1.00 ) #:color background)
+          [ 'plain
+              (filled-rectangle (* width 1.00) (* height 1.00 ) #:color "black")
             
           ]
         )
