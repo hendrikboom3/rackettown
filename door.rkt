@@ -7,30 +7,43 @@
 
 ; TODO:
 
-; Attributes need to have constraints -- such as a list of colours to choose from, possibly with possibilities.
+; Attributes need to have constraints -- such as a list of colours to choose from may need
+;   to be restricted to a sublist or to those satisfying a predicate.
 ; And then further bindings, instead of choosing, could further restrict the list.  Or adjust probabilities.
 
-; And sizes, such as length and width, need to be different.
-; I'd like to be able to pass in size ranges.  and let the details of an image depend on whether they fit,
-;   with the possibility if not producing an image at all if it's not possible.
+; Choices need to have probabilities.  Now that seems easy -- just let the attribute be a function that
+;   does some arithmetic and performs whatever random selection is required.
+; But we might need to, say, multiply probabilities by those with another list if another
+;   environmental constraint arises.  And then just having a function is quite useless, functions
+;   being opaque in Scheme,
 
-; There's a lot of inconsistency about whether to explicitly pass associationlists as parameters.
 
-; Some onject drawers insist on receiving such a parameter.
-; Others manipulate functions that do that without taking an asociation list as paramter itself.
-; There may be a natural distinction here; but I cross the boundary too easily.
+; And sizes, such as length and width, need to be managed differetly.
+
+; The present code provides sized to primitive objects, and for larger objects, calculates them
+;  from the sizes of their components.  This is the behaviour inherited directy fros pict.
+; I'd like to be able to place size constraints on objects and let their sobobjects adjust accordingly,
+;  This might affect the size, presence, and placement of the subobjects, which might well have minimum
+;  or maximum sizes of their own.
+
+; There's a lot of inconsistency about associationlists as parameters.
+
+; Some object drawers insist on receiving such a parameter.
+; Others, without taking an association list themselves,
+;   manipulate functions that take an association list and
+;   produce resulting functions that take associaltion lists.
+; There may be a natural distinction here; but I cross the boundary too easily an too often.
 ; The low-level drawing code needs to know what is to be drawn; it takes this from an association list.
-; The higher-level combiners need to manipulate functions that take an association list and produce functions that take association lists.
-
+; The higher-level combiners may be able to take them more implicitly.
 
 
 ; Attribute management
 
-; ali is an environment.  It should contain all the parameters that are neede to make a typical whatever (at the moment, the whatever is a door.)
-; At the moment, also, it allows attributes to be defined as functions
+
+; At the moment, attributes can be defined as functions
 ;   at lookup time the entire association list is passed to the function so that its value can depend on other (not necessarily previous) parameters.
 
-(define (looker name ali succeed fail)
+(define (looker name env succeed fail)
   (letrec (
       (lookup2 (lambda (name aa succeed fail)
         (if (eq? aa '())
@@ -38,7 +51,7 @@
           (if (eq? name (caar aa))
             (let ((value (cdar aa)))
               (if (procedure? value)
-        	  (succeed (value ali))
+        	  (succeed (value env))
          	  (succeed value)
         	)
               )
@@ -46,14 +59,14 @@
           )
         )
       )))
-    (lookup2 name ali succeed fail)
+    (lookup2 name env succeed fail)
   )
 )
 
-(define (lookup name ali fail)
-  (looker name ali (lambda (result) result) fail)
+(define (lookup name env fail)
+  (looker name env (lambda (result) result) fail)
 )
-(define (old lookup name ali fail)
+(define (old lookup name env fail)
   (letrec (
       (lookup2 (lambda (name aa fail)
         (if (eq? aa '())
@@ -61,7 +74,7 @@
           (if (eq? name (caar aa))
             (let ((value (cdar aa)))
               (if (procedure? value)
-        	  (value ali)
+        	  (value env)
          	  value
         	)
               )
@@ -69,7 +82,7 @@
           )
         )
       )))
-    (lookup2 name ali fail)
+    (lookup2 name env fail)
   )
 )
 
