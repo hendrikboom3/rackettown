@@ -175,6 +175,7 @@
           ; 10 isn't meant to be realistic.  It's meant to be ridiculous as a way of showing that something is wrong in the picture.
           [height (lookup 'height a (lambda () 10))]
           [style (lookup 'style a (lambda () 'paned))]
+          [background (make-color 80 120 100)]
 	)
      ; (show 'framed style) (show 'width width) (show 'height height)
         (cond
@@ -182,7 +183,7 @@
 	    ( pin-over
 	      (filled-rectangle (* width 1.00) (* height 1.00 ) #:color "red")
 	      ( * width 0.05 ) ( * height 0.05 )
-	      (filled-rectangle (* width 0.90) (* height 0.90 ) #:color "black")
+	      (filled-rectangle (* width 0.90) (* height 0.90 ) #:color background)
 	  )]
           [ (eq? style 'paned)
             ( pin-over
@@ -193,7 +194,7 @@
                   )
           )]
           [ (eq? style 'plain)
-              (filled-rectangle (* width 1.00) (* height 1.00 ) #:color "black")
+              (filled-rectangle (* width 1.00) (* height 1.00 ) #:color background)
             
           ]
         )
