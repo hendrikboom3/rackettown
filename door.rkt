@@ -174,12 +174,12 @@
 
 ; Architectural primitives
 
-(define (frame w framewidth)
+(define (frame framewidth w)
   ( let ([width (pict-width w)]
          [height (pict-height w)]
          )
-     (let [ (v (filled-rectangle framewidth height #:color "red" #:border-width 0 #:border-color "red"))
-         (h (filled-rectangle height framewidth #:color "red" #:border-width 0 #:border-color "red"))
+     (let [ (v (filled-rectangle framewidth height #:color "red" #:draw-border? #f))
+         (h (filled-rectangle height framewidth #:color "red" #:draw-border? #f))
      ]
        (pin-over (pin-over (pin-over (pin-over w 0 (- height framewidth) h) (- width framewidth) 0 v) 0 0 v) 0 0 h)
        )))
@@ -194,17 +194,16 @@
      ; (show 'framed style) (show 'width width) (show 'height height)
         (match style
           [ 'framed
-	    ( frame (filled-rectangle width height #:color background) 5)
+	    ( frame 5 (filled-rectangle width height #:color background #:draw-border? #f))
           ]
           [ 'paned
-            ( frame
+            ( frame 5
                   (let ((w  (lambda (a) (window (binda 'style 'framed (binda 'width (* width 0.5) (binda 'height (* height 0.5)  a)))))))
                     ((vert (list (hor (list w w)) (hor (list w w)))) a)
                   )
-                  5
             )]
           [ 'plain
-              (filled-rectangle (* width 1.00) (* height 1.00 ) #:color background)
+            (filled-rectangle (* width 1.00) (* height 1.00 ) #:color background #:draw-border #f)
             
           ]
         )
