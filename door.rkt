@@ -240,14 +240,17 @@
        (wall (lookup 'wall a (lambda () "lightgreen")))
       ]
     (define fw (bind 'width ( * width 0.9 ) (bind 'height (* height 0.45 ) window)))
+    (define space 40)
     (define facade (random-ref (list
-                 (ht-append (spacer a) (door a) (spacer a) (fw a) (spacer a) (fw a) (spacer a))
-                 (ht-append (spacer a) (fw a) (door a)(spacer a) (fw a))
-                 (ht-append (fw a) (fw a) (spacer a) (door a))
+                 (ht-append space (blank) (door a) (fw a) (fw a) (blank))
+                 (ht-append space (blank) (fw a) (door a) (fw a) (blank))
+                 (ht-append space (blank) (fw a) (fw a) (door a) (blank))
+                 (ht-append space (blank) (ht-append (fw a) (fw a)) (door a) (blank))
                  )))
-    (pin-over (filled-rectangle (pict-width facade) (pict-height facade) #:color wall)
+    (define facade2 (vc-append (spacer a) facade))
+    (pin-over (filled-rectangle (pict-width facade2) (pict-height facade2) #:color wall)
               0 0
-              facade)
+              facade2)
     ;   (ht-append (door a) (window a) (door a))
   )
 )
