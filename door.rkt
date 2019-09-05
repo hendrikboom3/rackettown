@@ -264,7 +264,7 @@
 
 ; Test cases
 
-(define colours '( "white" ; "red" "orange" "yellow" "chartreuse"
+(define colours '( "white" "red" "orange" "yellow" "chartreuse"
                            "green" "lightgreen" "darkgreen" "turquoise"
                            "blue" "lightblue" "darkblue" "purple" "gray"
                            "lightgray:" "darkgray"
