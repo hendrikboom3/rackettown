@@ -1,21 +1,23 @@
-This is, on the face of it, a program to draw facades of buildings with somewhat random wondows and doors.  Even as just this, it is deficient in many ways.  It doesn't have enough range of colours, and there are far too few kinds of windows.
+This is, on the face of it, a program to draw facades of buildings with somewhat random windows and doors.  Even as just this, it is deficient in many ways.  It doesn't have enough range of coordinated colours, and there are far too few kinds of windows, door handles, mailbox slots (actually none of these patter).
 
 But that isn't the purpose of this code; it's a vehicle for another objective.
 
 I'm building a library to manage attributes while drawing pictures.
 
-Attibutes will be things like architectural style, sizes, colours, and so forth.
-I'm using association lists simulate dynamic binding (as opposed to the static binding that Scheme uses everywhere) to manage style information,
-though I suspect that plain old association lists as present in the original Lisp 1.5 may be too simple.
+Attibutes will be things like architectural style, sizes, colours, and so forth.  Maybe eventually climate, life zone, local geology, and so forth.
+
+I'm using association lists to simulate dynamic binding (as opposed to the static binding that Scheme uses everywhere) to manage style information,
+though I suspect that the plain old association lists from the original Lisp 1.5 may be too simple.
 But I won't find out in what way they are oversimplified until I try them out and see where it gets awkward.
 
 There are perhaps too many functions that explicitly manipulate association lists,
 taking association lists as parameters and returning them as results.
 I'd prefer to use ones where the association list is implicit,
 so I don't fill user code with a lot of lambda's and a's or a-list's.
+(some functions call a-lists 'a'; others call them 'env'; also inconsistent)
 
 I'm currently in transition.
-The user won't be compounding picts explicitly,
+The user won't be compounding picts directly,
 but instead compounding functions that return picts.
 
 I suspect the functions that explicitly mention association lists will be
