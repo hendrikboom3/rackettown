@@ -1,3 +1,5 @@
+# About door.rkt
+
 This is, on the face of it, a program to draw facades of buildings with somewhat random windows and doors.  Even as just this, it is deficient in many ways.  It doesn't have enough range of coordinated colours, and there are far too few kinds of windows, door handles, mailbox slots (actually none of these patter).
 
 But that isn't the purpose of this code; it's a vehicle for another objective.
@@ -62,3 +64,15 @@ What my current recursive passing down assocation lists doesn't do:
 * Do anything with 3-D
 * Deal with floor plans instead of facades
 * Do any kind of space subdivision that isn't hierarchical rectangles.
+
+# About matcher and ren
+
+These are seemingly independent of door, certainly at present.
+
+matcher.rkt is the beginning of a rule formalism for a plot calculus (still nly a vague concept)
+
+ren.rkt is likewse a beginning -- currently it describes quests -- the kinds of things that are often quested for in fantasy games and novels.  No, I really don't know where this is going.  Thta's the point of doing this.
+
+And I hope the attribute mechanism in door will eventually expand to being able to talk about map regions instead of doors an windows.  This will need much experimentation.
+
+ren has a trial mechanism for probabilities, which may get adopted, or something like it, for door.rkt.
