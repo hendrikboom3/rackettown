@@ -1,0 +1,280 @@
+# Notes here on figuring out pict3d.
+
+What is has to do:
+
+make 3D objects
+set attributes
+render.
+
+Rendering seems to involve;
+* making the objects into triangle meshes
+* creating appropriate openGL buffers
+* writing the mesh data into them
+
+The git repository keeps saying that various kinds of documentation
+has been completed as part of a commit message, but I can't find any of this documentation anywhere.
+
+next TODO:
+
+figure out how it writes triangles or meshes into the buffers
+figure out how it constructs these buffers
+figure out how it passes the buffers to openGL
+figure out the shaders.
+figure out how it communicates shader variables to the shaders.
+
+This stuff seems to be done in several passes.
+
+pict3d seems to be on github at https://github.com/ntoronto/pict3d
+
+ASK: Is there another repository that's, meybe, more up-to-date and maintained by the racket project?  YES:  https://pkgs.racket-lang.org/package/pict3d
+
+Is it specific to racket?
+
+Directory structure there:
+
+* pict3d
+  * private
+    * engine
+      * draw
+        * draw-pass.rkt
+	* draw-passes.rkt
+	* merge-passes.rkt
+	* types.rkt
+      * scene
+        * scene-query.rkt
+	* scene.rkt
+	* tags.rkt
+	* types.rlt
+      * shader
+        * serialize-vertices.rkt
+	* shader-code.rkt
+      * draw.rkt
+      * scene.rkt
+      * shader.rkt
+      * types.rkt
+      * utils.rkt
+    * gl
+      * buffer.rkt
+      * cached-vector.rkt
+      * context.rkt
+      * face.rkt
+      * framebuffer.rkt
+      * object.rkt
+      * program.rkt
+      * renderbuffer.rkt
+      * texture.rkt
+      * typed-context.rkt
+      * untyped-context.rkt
+      * vertex-array.rkt
+    * gui
+      * shape
+      * utils
+      * indicators.rkt
+      * invisible-context.rkt
+      * master-context.rkt
+      * parameters.rkt
+      * pict3d-bitmap.rkt
+      * pict3d-canvas.rkt
+      * pict3d-combinators.rkt
+      * pict3d-draw.rkt
+      * pict3d-snip.rkt
+      * pict3d-struct.rkt
+      * typed-pict3d-canvas.rkt
+      * typed-pict3d-combinators.rkt
+      * typed-user-types.rkt
+      * untyped-master-context.rkt
+      * untyped-pict3d-bitmap.rkt
+      * untyped-pit3d-canvas.rkt
+      * user-types.rkt
+    * math
+      * fl.rkt
+      * fl2.rkt
+      * fl3.rkt
+      * fl4.rkt
+      * flaffine3.rkt
+      * fllinear3.rkt
+      * flplane3.rkt
+      * flprojective3.rkt
+      * flrect3.rkt
+      * fls3.rkt
+      * flv3-merge.rkt
+      * flv3.rkt
+      * flv4.rkt
+      * maybe-flrect3.rkt
+    * shape
+      * sphere
+        * ge_30.rkt
+	* ge_32.rkt
+	* sphere-type.rkt
+      * composite.rkt
+      * cylinder.rkt
+      * directional-light.rkt
+      * disk.rkt
+      * frozen-scene.rkt
+      * point-light.rkt
+      * polygon.rkt
+      * rectabgle.rkt
+      * sphere.rkt
+      * triangle-mesh.rkt
+      * triangle-outline.rkt
+      * types.rkt
+    * soup
+      * deform.rkt
+      * geometry.rkt
+      * group.rkt
+      * mesh.rkt
+      * query.rkt
+      * types.rkt
+    * universe
+      * big-bang.rkt
+    * engine.rkt
+    * ffi-types.rkt
+    * ffi.rkt
+    * gl.rkt
+    * lazu-gui.rkt
+    * math.rkt
+    * memo.rkt
+    * shape.rkt
+    * soup.rkt
+    * untyped-utils.rkt
+    * utils.rkt
+  * scribblings
+  * tests
+  * engine.rkt
+  * info.rkt
+  * main.rkt
+  * universe.rkt
+* typed
+
+I find myself urious about pict3d-bitmap within the gui directory.
+I suspect it's just something available for ordinary 2D user interfacing, but I don't really see why pict3d would need a user interface library at all.
+
+Also a numner of files seem to be available in typed and untyped versions.
+
+And I suspect things in private/gl are important.
+Not to mention thinst in shape, suh as triangle-mesh, triangle-outline, and polygon.
+
+I wonder where quad is defined.  It seems to be in private/shape/polygon.rkt.  At least, that contains make-quad-shape, quad-shape, make-quad-shape, quad-shape->triangle-mesh-shape, quad-shape-mesh, set-quad-shape-color, set-quad-shape-emitted, set-quad-shape-material, ger-quad-shape-passes. get-quad-shape-bboc, quad-shaoe-transform, quad-shaoe-ray-intersect, quad-shaoe-extract-faces, quad-shaoe-tesselate, and quad-shape-deform.  quad-shaoe-functions seems to wrap these all together.
+
+So it looks as if quad-shape is a good example of a shape to use as an example toward understanding.  Gathering together the quad-shape-funtions looks like the method table for an object.  I guess I shoudl try and figure out just what the conventions are for this.
+
+polygon.rkt seems n=mostly to be concerned with quads, in fact.
+and it uses
+  * triangle-mesh.rkt, and:
+  * "../math.rkt"		       
+  * "../memo.rkt"
+  * "../engine.rkt"
+  * "../soup.rkt"
+  * "../utils.rkt"
+  * "types.rkt"
+suggesting these have some particular importance.
+Triangle-mesh obviously because everything, including quads, have to be reduced to triangles when rendered
+
+triangle-mesh.rkt
+
+uses
+  * "../math.rkt"
+  * "../memo.rkt"
+  * "../engine.rkt"
+  * "../soup.rkt"
+  * "../utils.rkt"
+  * "types.rkt"
+
+and it gives me clues about the "passes" in the crey rare comments in this code.
+
+  * pass1: meterial
+  * pass2: color
+  * triangler mesh shape passes
+
+and operations that seem not to be passes:
+
+  * bounding box (is this a pass?)
+  * transform
+  * ray intersection
+  * tesselation
+  * warp
+
+and a lot gets wrapped up as triangle-mesh-shape-functions.
+
+
+triangle-outline.rkt
+
+I'm guessing this describes one triangle at a time instead of doing entore meshes.
+
+Uses:
+  * typed/opengl
+  * "../math.rkt"
+  * "../memo.rkt"
+  * "../engine.rkt"
+  * "../soup.rkt"
+  * "../utils.rkt"
+  * "types.rkt")
+
+The shape seems to consist of vertices, corners, edges, width, and back?
+  Vertices wouold seem to be the obvious thing.
+  corners an edges are bookean, suggesting that the indicate whether corners and edges are to be explicitly drawn.
+  width is a flonum, not lear what it's the width of.
+  back? is probably something about face orientation.
+triangle outline shape is also a shape, whihc means it has all the properties of a general shape.
+
+There are functions to set the color, the 'emitted' (whatever that is), the material.
+
+pass 1 material
+
+functions for vertex-attributes, fragment-attributes, vertex code, and a lot more,
+
+pass 2 color
+
+functions for draw vertex attributes, draw fragment attributes,
+These see to be something that piles up attribute names for opengl shaders to ues
+      
+Triangle mesh shpe passes
+
+and a bunch of miscellany handlinf
+* bounding box
+* transform
+* deform
+* and a collection of all these functions.
+
+
+Current source repository turns out to be https://pkgs.racket-lang.org/package/pict3d
+
+I'll switch to that.
+
+
+## 2019 11 18
+
+I'll have a look at opengl, in pict3d/typed/opengl
+
+### typed-opengl.scrbl
+
+It looks as if is going to be documentation, and in a sense it is.
+It includes a lot of sections that generate calling conventions for only the "non0extendion" OpenGL procedures.  You still need to find the official opengp documentation elsewhere to know what they *d8*.
+However, the wrapper procedures *do* heck for errors where that is allowed, so you don't have to do that youeself.
+
+It also describes functions for manipulating homogenous vectors.  OpenGL likes thee a lot; they are the principak means of communcating with the GPU.
+
+### typed/opengl/generated/gl_specs.inc
+
+typed/opengl/generated/gl_specs.inc is an inclusion that includes all the definitions of opengl-defined names,  I suspect this, too, is automatically generated.  THough ite revision message is "initial commit"/.
+
+### pict3D/typed/opengl.rkt
+  This provides ann the definitions intended for the Racket openGL user.  It does this by passing on definitions from opengl/typed.gkt and opengl/utils.rkt.
+
+#### pict3d/typed/opengl/typed.rkt
+
+This provides the types of the Racket opengl functions.  It dies this by including generated/gl-specr.inc after defining a bunch of macros that are heavily used.  It does the include with an (include "generated/gl_specs.inc") and the included file has no special #lang intro.
+
+TODO: Can I do similar with my scribble problems?
+
+#### pict3d/typed/opengl/utils.rkt
+
+This provies a bunch of typed functions that deal in strings, GL versions, innteger types, extensions, vectors, textures, shaders, bitmaps.
+
+* This is the first time I've seen code in the pict3D repository that I've seen code relating to textures.
+  * It looks as if textures were once disabled because of a problem with typed racket.  THey got re-enabled "two years ago" (as of Nov 18, 2019).
+  
+#### pict3d/typed/opengl/readspec.rkt
+
+This reads the standards-ommittee-provided .spec files from the specfiles directory and generates the Racket versins of them.
+
