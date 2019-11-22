@@ -2,10 +2,16 @@
 (require pict)
 (require racket/gui/base)
 (require racket/random)
+(require colors)
+
+set-brightness
 
 (define (show tag thing) (print (cons tag thing)) thing)
 
 ; TODO:
+
+; Colour coordinatino based on hue, saturation and brightness?  Or some other kind of colour wheel theory?
+; See https://docs.racket-lang.org/colors/index.html
 
 ; Choices need to have probabilities.  Now that seems easy -- just let the attribute
 ;   performs whatever random selection is required.
@@ -225,7 +231,7 @@
 		(window (binda 'style 'paned (binda 'width ( * width 0.9 ) (binda 'height (* height 0.45 ) a))))
 	      )
 	    (* width 0.85) (* height 0.6)
-	    (disk ( * width 0.10) #:color "yellow"))
+	    (disk ( * width 0.10) #:color (random-ref '("yellow" "white"))))
 	)
 )
 
