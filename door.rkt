@@ -268,6 +268,10 @@ set-brightness
   (horsep 8 door spacer a)
 )
 
+(define (shrub) (disk 50 #:color (random-ref '("green" "lightgreen" "darkgreen"))))
+
+;(define (scene a) (pin-over (dww a) 0 0 (shrub)))
+(define (scene a) ((random-ref (list ltl-superimpose ctl-superimpose rtl-superimpose)) (dww a) (shrub)))
 ; Test cases
 
 (define colours '( "white" "red" "orange" "yellow" "chartreuse"
@@ -313,7 +317,7 @@ set-brightness
 
 ; (show-pict (scale (stackdoors alist) 0.5))
 
-(show-pict (scale (dww alist) 2.0))
+(show-pict (scale (scene alist) 2.0))
 
 
 (define e1 0)
