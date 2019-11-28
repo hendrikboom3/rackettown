@@ -268,10 +268,20 @@ set-brightness
   (horsep 8 door spacer a)
 )
 
-(define (shrub) (disk 50 #:color (random-ref '("green" "lightgreen" "darkgreen"))))
+(define (shrub) (filled-ellipse (random 60 120) ( random 60 120)  #:color (random-ref '("green" "lightgreen" "darkgreen"))))
 
+(define (ran-tl-superimpose base l) (print (list "l is " l))
+  (if
+   (pair? l)
+   (ran-tl-superimpose
+    ((random-ref (list ltl-superimpose ctl-superimpose rtl-superimpose))
+     base (car l))
+    (cdr l))
+   base)
+  )
 ;(define (scene a) (pin-over (dww a) 0 0 (shrub)))
-(define (scene a) ((random-ref (list ltl-superimpose ctl-superimpose rtl-superimpose)) (dww a) (shrub)))
+
+(define (scene a) (ran-tl-superimpose (dww a) (list (shrub) (shrub))))
 ; Test cases
 
 (define colours '( "white" "red" "orange" "yellow" "chartreuse"
