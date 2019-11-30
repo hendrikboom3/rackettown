@@ -21,7 +21,7 @@ set-brightness
 
 
 ; Attributes need to have constraints -- such as a list of colours to choose from,
-; And we may need to further restrict choices,   possibly with possibilities.
+; And we may need to further restrict choices, possibly with a list of current possibilities.
 ; And then further bindings, instead of choosing, could further restrict the list.
 ;   Or adjust probabilities.
 

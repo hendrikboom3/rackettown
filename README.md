@@ -1,3 +1,14 @@
+# What works
+
+door.rkt draws the facade of a house. usually with somw shrubs in front.
+
+matcher.rkt prints some invented potential murder reports.
+
+gen.txt prints out some quests.
+
+None of this code is stable, and will almost certainly change incompatibly.
+If you use any of it, make and use your own copy; otherwise things will likely break.
+
 # About door.rkt
 
 This is, on the face of it, a program to draw facades of buildings with somewhat random windows and doors.  Even as just this, it is deficient in many ways.  It doesn't have enough range of coordinated colours (it doesn't even know how to coordinate colours), and there are far too few kinds of windows, door handles, mailbox slots (actually none of these latter).
@@ -10,6 +21,7 @@ Attibutes will be things like architectural style, sizes, colours, and so forth.
 
 I'm using association lists to simulate dynamic binding (as opposed to the static binding that Scheme uses everywhere) to manage style information,
 though I suspect that the plain old association lists from the original Lisp 1.5 may be too simplistic.
+
 But I won't find out in what way they are simplistic until I try them out and see where it gets awkward.
 
 There are perhaps too many functions that explicitly manipulate association lists,
@@ -65,11 +77,11 @@ What my current recursive passing down assocation lists doesn't do:
 * Deal with floor plans instead of facades
 * Do any kind of space subdivision that isn't hierarchical rectangles.
 
-# About matcher and ren
+# About matcher and gen
 
 These are seemingly independent of door, certainly at present.
 
-matcher.rkt is the beginning of a rule formalism for a plot calculus (still nly a vague concept)
+matcher.rkt is the beginning of a rule formalism for a plot calculus (still only a vague concept)
 
 * Ideas toward plot generator
   * actors
@@ -89,12 +101,13 @@ matcher.rkt is the beginning of a rule formalism for a plot calculus (still nly 
 TODO: Have a look at Crusader Kings 2
 the lecher puritan (inhereht plot conflict)
 
-ren.rkt is likewise a beginning -- currently it describes quests -- the kinds of things that are often quested for in fantasy games and novels.  No, I really don't know where this is going.  That's the point of doing this.
+gen.rkt is likewise a beginning -- currently it describes quests -- the kinds of things that are often quested for in fantasy games and novels.  No, I really don't know where this is going.  That's the point of doing this.
 
 And I hope the attribute mechanism in door will eventually expand to being able to talk about map regions instead of doors an windows.  This will need much experimentation.
 
-ren has a trial mechanism for probabilities, which may get adopted, or something like it, for door.rkt.
+gen has a trial mechanism for probabilities, which may get adopted, or something like it, for door.rkt.
 
-Notes.
+# pict3d
 
+I would love to get textures in a 3D scene, but pict3d does not do that.
 Current source repository for pict3d turns out to be https://pkgs.racket-lang.org/package/pict3d
