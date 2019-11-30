@@ -71,7 +71,25 @@ These are seemingly independent of door, certainly at present.
 
 matcher.rkt is the beginning of a rule formalism for a plot calculus (still nly a vague concept)
 
-ren.rkt is likewise a beginning -- currently it describes quests -- the kinds of things that are often quested for in fantasy games and novels.  No, I really don't know where this is going.  Thta's the point of doing this.
+* Ideas toward plot generator
+  * actors
+  * traits
+    * ambitious
+    * is a thif
+  * Possessions
+    * life
+    * a knife
+  * actions
+
+* e.g.
+  * Bob has knife
+  * John is a thief
+  * therefore John has a knife
+
+TODO: Have a look at Crusader Kings 2
+the lecher puritan (inhereht plot conflict)
+
+ren.rkt is likewise a beginning -- currently it describes quests -- the kinds of things that are often quested for in fantasy games and novels.  No, I really don't know where this is going.  That's the point of doing this.
 
 And I hope the attribute mechanism in door will eventually expand to being able to talk about map regions instead of doors an windows.  This will need much experimentation.
 
