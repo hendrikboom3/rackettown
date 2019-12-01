@@ -1,10 +1,8 @@
 #lang racket
 
-; I no longer understand this code.
-;  I'm going to have to annotate it further.
+(require racket/random)
 
 ; Searching the database of elementary facts
-(require racket/random)
 
 (define-syntax find
 #|
@@ -131,7 +129,7 @@ It can ths be used to filter results.
       ground
       ))
 
-(displayln 'test-disappear)
+#|(displayln 'test-disappear)
 (displayln ground)
 (displayln (disappear 'John ground))
 (displayln (disappear 'Mary '(Mary)))
@@ -139,18 +137,10 @@ It can ths be used to filter results.
 (displayln ground)
 (displayln (disappear 'Mary ground))
 
-(displayln 'tested) 
-; TODO: find  better syntax for rules than the following:
+(displayln 'tested)
+|#
 
-; a sample rule expressing the eternal triangle
 
-((find ((list 'loves a n)
-        (find ((list 'loves b n)
-               (check (not (equal? a b))
-                      (lambda (facts) (displayln (list a 'kills b))))))))
-;; ((find ((list 'loves a n) (find ((list 'loves b n) (lambda (facts) (unless (equal? a b) (displayln (list a 'kills b)))))                               )))
-  ground
- )
 
 ; A list of actions collected during find operations.
 ; This is maintained by side effects.
@@ -166,6 +156,10 @@ It can ths be used to filter results.
 
 (reset-actions)
 
+; a sample rule expressing the eternal triangle
+; TODO: find  better syntax for rules than the following:
+
+
 (define rule (find ((list 'loves a n1)
         (find ((list 'loves b (? (lambda (e) (equal? e n1))))
                (check (not (equal? a b))
@@ -174,8 +168,8 @@ It can ths be used to filter results.
 
 ; TODO: I should not have to explicitly check for equality if the same variable is mentioned in two consequtive patterns
 
-(print action-list)
-;((cdr (car action-list)) ground)
+; Perform one turn.  This function creates alternatives and puts them in tha global variable 'action-list'
+; In a game the player would get to choose between these alternatives.
 
 (define (turn rule)
   (reset-actions)
@@ -189,12 +183,13 @@ It can ths be used to filter results.
              )
       )
   )
+
 (define (turns count rule)
   (if ( <= count 0) '()
       (begin (turn rule) (turns ( - count 1 ) rule))
       ))
 
-(displayln 'last)
+
 (displayln ground)
 (reset-actions)
 (turns 4 rule)
