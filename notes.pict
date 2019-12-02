@@ -1,0 +1,11 @@
+It seems to me that the simplest way to use pict to make a 3D scene is probably not to get pict3D to map a texture to an arbitrary pict3D object, but to use a geometric transformation on 2D picts and to use pict to combine them in z-order.
+
+pict already has affine transformations, though they are expressed using the pict drawing adjusters scale, rotate, and shear.  These are enough to produce isometric or other parallel projections.
+
+And this could be done using pict as is.
+
+Whet's left out is projective 2D transformations.  which are easily expessed as 3x3 matrices in homogeneous coordinates.  And could possibly be specified by indicating how the four corners of a bounding box or rectangle should be mapped onto the four corners of a quadrangle.
+
+This could be just one more transformation added to the drawing adjusters.  It could possibly be implemented (poorly) using only the present pict by drawing a pict to a bitmap, and then mapping pixels using the 3x3 matrix (or ite inverse), and then converting the bitmap to a pict again.
+
+Yes.  Doing this better would likely involve the innards of pict.  Possibly adding a now kind of pict object to pict.  And it would require the user to keep track of z-order,  And it would have problems with onjects that intersect in 3-space.  But it might be easier than figuring out pict3d.
