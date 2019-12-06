@@ -9,3 +9,5 @@ Whet's left out is projective 2D transformations.  which are easily expessed as 
 This could be just one more transformation added to the drawing adjusters.  It could possibly be implemented (poorly) using only the present pict by drawing a pict to a bitmap, and then mapping pixels using the 3x3 matrix (or ite inverse), and then converting the bitmap to a pict again.
 
 Yes.  Doing this better would likely involve the innards of pict.  Possibly adding a now kind of pict object to pict.  And it would require the user to keep track of z-order,  And it would have problems with onjects that intersect in 3-space.  But it might be easier than figuring out pict3d.
+
+Issues:  To do this I'm going to hve to figure out the pict data structures.  Anf I still have trouble navigating the module system's provide links as they weave from file to file, nd I'm not yet familiar with Racket's object system.  Onjects seem to be Racket-specific, rather than Scheme-specific.  I don't see them in the r7rs definition, for example.  Or have I just not looked long enough?
