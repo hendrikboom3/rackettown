@@ -1,0 +1,47 @@
+
+
+Going through the available packages that have something with 3d, I find
+
+des, deinprogramm seem to have noting to do with 3d, though they show up on the 3d search
+
+3d-model -- some code dealing with a collection of named triangle meshes as representatinos for objects.
+But: it's not clear how this is to be used for graphics, because it has no opengl support.  It deals with vertices, triangles, uv-coordinates, and polygons.  My guess is that uv-coordinates are there to deal with texture-mapping, but there is no actual indication of this in the documentation.
+
+glfw3 -- appears to be abinding for glfw.  The code seems to make and manipulate windows.  i presume this is for the use of opengl.
+
+js-voxel -- a general-purpose voxel programming environment
+Currently compiles, but tests fail.
+
+lindenmayer -- draws trees
+
+opencv -- binding to the opencv library,  What is this?
+
+OpenGL -- an automatically generated wrapper around the OpenGL library.  These procedures are UNSAFE.  Save before running.
+
+pict3d-orig
+pict3d-die-cut
+pict3d
+
+It's not clear hos pict3d and pict3d-orig are related.  It's possible pict3d-orig is an older version, and the studying it may yield insights into pict3d.  Or one may just have a few bug-fixes over the other,
+
+pict3d.notes contains my notes on pict3d, insofar as I've discovered anything.
+
+voxel -- voxe space progrmming -- Seems ralated to js-voxel, but I'm not sure how.
+
+ruckus -- CAD graphics scientific
+
+quaternion -- quaternion arithmetic.  Rotations without gimbal-lock
+
+plot-doc
+plot-gui-lib
+plot-lib
+plot-test
+
+These would seem to be plotting libraries.  They are graded white, which presumably meand theres no informatin whether they copile or run.
+
+
+
+
+
+
+vulcan

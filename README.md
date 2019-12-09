@@ -118,7 +118,18 @@ And I hope the attribute mechanism in door will eventually expand to being able 
 
 gen has a trial mechanism for probabilities, which may get adopted, or something like it, for door.rkt.
 
-# pict3d
+# Notes
 
-I would love to get textures in a 3D scene, but pict3d does not do that.
+I would love to use do all this in 3D instead of 2d.
+
+## 3d.notes:
+
+brief notes on various 3d-related packages in the racket package library.  A lot of them don't compile or fail their tests.
+
+I'm starting to think it may turn out to be easier to do my 3D stuff directly in opengl and ignore all the solid-modelling tools in other packages.  A sad coment on the ease of modifying other software.
+
+## pict3d.notes
+
+Doing this in 3D likely needs textures.  I caan't just have one image paint over another, the way I do using pict.  pict3d does not do textures.  pict3d.notes is the rsult of my current investigation into pict3d, in an attempt to understand enough to add texture-mapping.
+
 Current source repository for pict3d turns out to be https://pkgs.racket-lang.org/package/pict3d
