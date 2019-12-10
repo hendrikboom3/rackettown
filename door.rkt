@@ -10,7 +10,7 @@ set-brightness
 
 ; TODO:
 
-; Colour coordinatino based on hue, saturation and brightness?  Or some other kind of colour wheel theory?
+; Colour coordination based on hue, saturation and brightness?  Or some other kind of colour wheel theory?
 ; See https://docs.racket-lang.org/colors/index.html
 
 ; Choices need to have probabilities.  Now that seems easy -- just let the attribute
@@ -134,6 +134,8 @@ set-brightness
 ;  Graphics combinators
 
 (define ( hor l )
+  ; l is a list of drawing functions (that take an alist as parameter)
+  ; (hor l) returns a drawing function (that takes an alist as parameter)
   (if (cons? l)
     (if
       (null? (cdr l))
@@ -148,6 +150,8 @@ set-brightness
 )  
 
 (define ( vert l )
+  ; l is a list of drawing functions (that take an alist as parameter)
+  ; (vert l) returns a drawing function (that takes an alist as parameter)
   (if (cons? l)
     (if
       (null? (cdr l))
@@ -215,6 +219,10 @@ set-brightness
         )
   )
 )
+(define (nodoor a)
+  (let ((height (lookup 'doorheight a (lambda () 2000))))
+    (blank 0 height)
+    ))
 
 (define (door a)
 	(let
@@ -235,6 +243,12 @@ set-brightness
 	)
 )
 
+(define (over-background facade colour a)
+    (pin-over (filled-rectangle (pict-width facade) (pict-height facade) #:draw-border? #f #:color colour)
+              0 0
+              facade)
+  )
+
 (define (dww a)
   (let
       [
@@ -253,10 +267,26 @@ set-brightness
                  (ht-append space (blank) (ht-append (fw a) (fw a)) (door a) (blank))
                  )))
     (define facade2 (vc-append (spacer a) facade))
-    (pin-over (filled-rectangle (pict-width facade2) (pict-height facade2) #:color wall)
-              0 0
-              facade2)
-    ;   (ht-append (door a) (window a) (door a))
+    (over-background facade2 wall a)
+  )
+)
+
+(define (www a)
+  (let
+      [
+       (width
+        (begin (lookup 'doorwidth a (lambda () 100)))
+        )
+       (height (lookup 'doorheight a (lambda () 200)))
+       (wall (lookup 'wall a (lambda () "lightgreen")))
+      ]
+    (define fw (bind 'width ( * width 0.9 ) (bind 'height (* height 0.45 ) window)))
+    (define space 40)
+    (define facade (random-ref (list
+                 (ht-append space (blank) (nodoor a) (fw a) (fw a) (fw a) (blank)) ; TODO: silly redundancy
+                 )))
+    (define facade2 (vc-append (spacer a) facade))
+    (over-background facade2 wall a)
   )
 )
 
@@ -268,9 +298,13 @@ set-brightness
   (horsep 8 door spacer a)
 )
 
-(define (shrub) (filled-ellipse (random 60 120) ( random 60 120)  #:color (random-ref '("green" "lightgreen" "darkgreen"))))
+(define (shrub) (filled-ellipse
+                 (random 60 120) ( random 60 120)
+                 #:draw-border? #f
+                 #:color (random-ref '("green" "lightgreen" "darkgreen"))
+                 ))
 
-(define (ran-tl-superimpose base l) (print (list "l is " l))
+(define (ran-tl-superimpose base l)
   (if
    (pair? l)
    (ran-tl-superimpose
@@ -281,7 +315,17 @@ set-brightness
   )
 ;(define (scene a) (pin-over (dww a) 0 0 (shrub)))
 
-(define (scene a) (ran-tl-superimpose (dww a) (list (shrub) (shrub))))
+
+(define (groundfloor a) (ran-tl-superimpose (dww a) (list (shrub) (shrub))))
+(define (upstairs a) (www a))
+(define (building aa) (let ((a (freezea 'wall aa)))
+                       (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a)) (lookup 'wall a (lambda () 'black)) a)
+                                        ))
+(define (street a) ((hor
+                    (list building building building building)
+                    ) a))
+(define (scene a) (street a))
+
 ; Test cases
 
 (define colours '( "white" "red" "orange" "yellow" "chartreuse"
@@ -327,7 +371,7 @@ set-brightness
 
 ; (show-pict (scale (stackdoors alist) 0.5))
 
-(show-pict (scale (scene alist) 2.0))
+(show-pict (scale (scene alist) 0.5))
 
 
 (define e1 0)

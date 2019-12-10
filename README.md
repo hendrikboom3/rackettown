@@ -1,6 +1,6 @@
 # What works
 
-door.rkt draws the facade of a house. usually with somw shrubs in front.
+door.rkt draws the facade of a a row of three-story houses. usually with somw shrubs in front.
 
 matcher.rkt prints some invented potential murder reports.
 
@@ -120,7 +120,7 @@ gen has a trial mechanism for probabilities, which may get adopted, or something
 
 # Notes
 
-I would love to use do all this in 3D instead of 2d.
+I would love to do all this in 3D instead of 2d.
 
 ## 3d.notes:
 
