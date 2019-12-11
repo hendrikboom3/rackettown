@@ -128,6 +128,14 @@ set-brightness
   ))
 )
 
+(define (fuzz name object)
+   (lambda (a)
+     (let ((value (lookup name a (lambda () '()))))
+       (if (eq? value '())
+           (object a)
+           (object (binda name (* value (+ 1 (* 0.15 (- (random) 0.5)))) a))
+           ))))
+
 (define (with a name value) (cons (cons name value) a))
 
 
@@ -142,7 +150,7 @@ set-brightness
       (car l)
       (let
         ( [rest (hor (cdr l))] )
-	(lambda (a) (hc-append ((car l) a) (rest a)))
+	(lambda (a) (hb-append ((car l) a) (rest a)))
       )
     )
     (print "ERROR: null list in hor")
@@ -184,14 +192,23 @@ set-brightness
 
 ; Architectural primitives
 
-(define (frame framewidth w)
+(define (innerframe framewidth border-colour w)
   ( let ([width (pict-width w)]
          [height (pict-height w)]
          )
-     (let [ (v (filled-rectangle framewidth height #:color "red" #:draw-border? #f))
-         (h (filled-rectangle height framewidth #:color "red" #:draw-border? #f))
+     (let [ (v (filled-rectangle framewidth height #:color border-colour #:draw-border? #f))
+         (h (filled-rectangle width framewidth #:color border-colour #:draw-border? #f))
      ]
        (pin-over (pin-over (pin-over (pin-over w 0 (- height framewidth) h) (- width framewidth) 0 v) 0 0 v) 0 0 h)
+       )))
+(define (outerframe framewidth border-colour w)
+  ( let ([width (pict-width w)]
+         [height (pict-height w)]
+         )
+     (let [ (v (filled-rectangle framewidth (+ height framewidth framewidth) #:color border-colour #:draw-border? #f))
+         (h (filled-rectangle (+ framewidth width framewidth) framewidth #:color border-colour #:draw-border? #f))
+     ]
+       (pin-over (pin-over (pin-over (pin-over w 0 height h) width 0 v) (- framewidth) 0 v) 0 (- framewidth) h)
        )))
 
 (define (window a)
@@ -200,14 +217,15 @@ set-brightness
           [height (lookup 'height a (lambda () 10))]
           [style (lookup 'style a (lambda () 'paned))]
           [background (make-color 80 120 100)]
+          (border-colour "white")
 	)
      ; (show 'framed style) (show 'width width) (show 'height height)
         (match style
           [ 'framed
-	    ( frame 5 (filled-rectangle width height #:color background #:draw-border? #f))
+	    ( innerframe 5 border-colour (filled-rectangle width height #:color background #:draw-border? #f))
           ]
           [ 'paned
-            ( frame 5
+            ( innerframe 5 border-colour
                   (let ((w  (lambda (a) (window (binda 'style 'framed (binda 'width (* width 0.5) (binda 'height (* height 0.5)  a)))))))
                     ((vert (list (hor (list w w)) (hor (list w w)))) a)
                   )
@@ -243,7 +261,7 @@ set-brightness
 	)
 )
 
-(define (over-background facade colour a)
+(define (over-background facade colour)
     (pin-over (filled-rectangle (pict-width facade) (pict-height facade) #:draw-border? #f #:color colour)
               0 0
               facade)
@@ -267,7 +285,7 @@ set-brightness
                  (ht-append space (blank) (ht-append (fw a) (fw a)) (door a) (blank))
                  )))
     (define facade2 (vc-append (spacer a) facade))
-    (over-background facade2 wall a)
+    (over-background facade2 wall)
   )
 )
 
@@ -283,19 +301,11 @@ set-brightness
     (define fw (bind 'width ( * width 0.9 ) (bind 'height (* height 0.45 ) window)))
     (define space 40)
     (define facade (random-ref (list
-                 (ht-append space (blank) (nodoor a) (fw a) (fw a) (fw a) (blank)) ; TODO: silly redundancy
+                 (ht-append (nodoor a) (ht-append space (blank)  (fw a) (fw a) (fw a) (blank))) ; TODO: silly redundancy
                  )))
     (define facade2 (vc-append (spacer a) facade))
-    (over-background facade2 wall a)
+    (over-background facade2 wall)
   )
-)
-
-(define (4doors a)
-  (horsep 4 door spacer a)
-)
-
-(define (8doors a)
-  (horsep 8 door spacer a)
 )
 
 (define (shrub) (filled-ellipse
@@ -318,13 +328,15 @@ set-brightness
 
 (define (groundfloor a) (ran-tl-superimpose (dww a) (list (shrub) (shrub))))
 (define (upstairs a) (www a))
-(define (building aa) (let ((a (freezea 'wall aa)))
-                       (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a)) (lookup 'wall a (lambda () 'black)) a)
-                                        ))
+(define (building aaa) (let ((aa (freezea 'wall aaa)))
+                        (let ((a (freezea 'style aa)))
+                       (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a)) (lookup 'wall a (lambda () 'black)) )
+                                        )))
 (define (street a) ((hor
-                    (list building building building building)
-                    ) a))
-(define (scene a) (street a))
+                    (list (fuzz 'doorheight building) (fuzz 'doorheight building) (fuzz 'doorheight building)
+                          (fuzz 'doorheight building) (fuzz 'doorheight building)
+                    )) a))
+(define (scene a) (over-background (outerframe 100 "orange" (street a)) "darkgrey") )
 
 ; Test cases
 
@@ -343,33 +355,12 @@ set-brightness
       (cons 'colour (lambda (a) (random-ref colours)))
       (cons 'highlight (lambda (a) (random-ref colours)))
       (cons 'wall (lambda (a) (random-ref colours)))
-      (cons 'style (random-ref '(paned framed))) ; 'plain is also a window style, but I won't choose it.
+      (cons 'style (lambda (a) (random-ref '(paned framed)))) ; 'plain is also a window style, but I won't choose it.
     )
 )
 
 ; (lookup 'colour alist (lambda(a) "gray"))
 
-; (print 'yup)
-
-; (show 'alist alist)
-
-; (print 'bar)
-; (print "\n")
-
-(define (stackdoors a)
-  (vc-append
-    (4doors a)
-    (8doors a)
-    ((freezeo 'colour 8doors) a)
-))
-
-
-
-; (show-pict ((hor (list door window door)) alist))
-
-; (show-pict (horsep 3 door window alist))
-
-; (show-pict (scale (stackdoors alist) 0.5))
 
 (show-pict (scale (scene alist) 0.5))
 
