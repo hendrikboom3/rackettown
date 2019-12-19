@@ -145,14 +145,20 @@ Directory structure there:
   * main.rkt
   * universe.rkt
 * typed
+  * opengl
+    * generated -- the types of OpenGL API call as represented in this typed Racket bindig,
+    * specfiles -- the files from which this API was generated.  Modified, because there seem to be errors in the official originals.
+    * untyped.rkt
+      This seems to be a module of macros used to define the various OpenGL functions for Racket, as well as some functions for manupulating OpenGL buffers and pointers.
+    * ...
 
-I find myself urious about pict3d-bitmap within the gui directory.
+I find myself curious about pict3d-bitmap within the gui directory.
 I suspect it's just something available for ordinary 2D user interfacing, but I don't really see why pict3d would need a user interface library at all.
 
-Also a numner of files seem to be available in typed and untyped versions.
+Also a number of files seem to be available in typed and untyped versions.
 
 And I suspect things in private/gl are important.
-Not to mention thinst in shape, suh as triangle-mesh, triangle-outline, and polygon.
+Not to mention things in shape, suh as triangle-mesh, triangle-outline, and polygon.
 
 I wonder where quad is defined.  It seems to be in private/shape/polygon.rkt.  At least, that contains make-quad-shape, quad-shape, make-quad-shape, quad-shape->triangle-mesh-shape, quad-shape-mesh, set-quad-shape-color, set-quad-shape-emitted, set-quad-shape-material, ger-quad-shape-passes. get-quad-shape-bboc, quad-shaoe-transform, quad-shaoe-ray-intersect, quad-shaoe-extract-faces, quad-shaoe-tesselate, and quad-shape-deform.  quad-shaoe-functions seems to wrap these all together.
 

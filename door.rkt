@@ -189,6 +189,19 @@ set-brightness
   ; (filled-rectangle 40 40 #:color "white")
   )
 
+; Geometry
+
+(define (itri w h)
+  (define (draw dc dx dy)
+    (define path (new dc-path%))
+    (send path move-to 0 h)
+    (send path line-to ( / w 2) 0)
+    (send path line-to w h)
+    (send path close)
+    (send dc draw-path path dx dy)
+    )
+  (dc draw w h)
+)
 
 ; Architectural primitives
 
@@ -308,25 +321,56 @@ set-brightness
   )
 )
 
-(define (shrub) (filled-ellipse
+(define (ornament r)
+  (disk r #:color (random-ref '("red" "blue" "lightgreen" "yellow" "white" "orange")))
+  )
+
+(define (decorate1 w h base)
+  (define yf (random))
+  (print yf)
+  (define y (* h yf))
+  (define x ( + ( * w yf (random)) (* 0.5 w ( - 1.0 yf))))
+  (print (list 'w w 'h h 'yf yf 'x x 'y y))
+  (pin-over base x y (ornament (* w 0.2)))
+  )
+
+(define (decorate n w h base)
+  (if (equal? n 0) base
+      (decorate1 w h (decorate ( - n 1 ) w h base)
+                 )))
+
+(define (xmas w h)
+  (decorate 4 w h (colorize (itri w h) "darkgreen"))
+  )
+
+(define (shrub)
+  (random-ref (list
+               (filled-ellipse
                  (random 60 120) ( random 60 120)
                  #:draw-border? #f
                  #:color (random-ref '("green" "lightgreen" "darkgreen"))
-                 ))
+                 )
+               (colorize (itri 100 200) "darkgreen")
+               (xmas 100 200)
+               )
+              )
+  )
 
-(define (ran-tl-superimpose base l)
+(define (ran-tl-superimpose base l) ; superpose the elements of l at random points along the bottom of base.
   (if
    (pair? l)
    (ran-tl-superimpose
-    ((random-ref (list ltl-superimpose ctl-superimpose rtl-superimpose))
+    ((random-ref (list ltl-superimpose ctl-superimpose rtl-superimpose)) ; TODO: more variety in location.
      base (car l))
     (cdr l))
    base)
   )
-;(define (scene a) (pin-over (dww a) 0 0 (shrub)))
 
 
-(define (groundfloor a) (ran-tl-superimpose (dww a) (list (shrub) (shrub))))
+(define (groundfloor a)
+  (ran-tl-superimpose (dww a) ; TODO: more variety in witdhs and windows of buildings
+                      (list (shrub) (shrub)) ; TODO: varying numners of shrubs, occasional constraints on shrub statistics
+                      ))
 (define (upstairs a) (www a))
 (define (building aaa) (let ((aa (freezea 'wall aaa)))
                         (let ((a (freezea 'style aa)))
@@ -364,7 +408,6 @@ set-brightness
 
 (show-pict (scale (scene alist) 0.5))
 
-
 (define e1 0)
 (define e2 0)
 (define e3 0)
@@ -380,4 +423,3 @@ set-brightness
 
 (rantest)
 
-(print (list 'alpha e1 e2 e3 'omega))
