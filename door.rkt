@@ -350,8 +350,9 @@ set-brightness
                  #:draw-border? #f
                  #:color (random-ref '("green" "lightgreen" "darkgreen"))
                  )
-               (colorize (itri 100 200) "darkgreen")
-               (xmas 100 200)
+               (random-ref (list
+                           (colorize (itri 100 200) "darkgreen")
+                           (xmas 100 200)))
                )
               )
   )
