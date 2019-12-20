@@ -11,8 +11,9 @@ Rendering seems to involve;
 * creating appropriate openGL buffers
 * writing the mesh data into them
 
-The git repository keeps saying that various kinds of documentation
-has been completed as part of a commit message, but I can't find any of this documentation anywhere.
+The git repository commit messages keep saying
+that various kinds of documentation
+have been completed, but I can't find any of this documentation anywhere.
 
 next TODO:
 
@@ -255,7 +256,7 @@ I'll have a look at opengl, in pict3d/typed/opengl
 ### typed-opengl.scrbl
 
 It looks as if is going to be documentation, and in a sense it is.
-It includes a lot of sections that generate calling conventions for only the "non0extendion" OpenGL procedures.  You still need to find the official opengp documentation elsewhere to know what they *d8*.
+It includes a lot of sections that generate calling conventions for only the "non-extendion" OpenGL procedures.  You still need to find the official opengp documentation elsewhere to know what they *d8*.
 However, the wrapper procedures *do* heck for errors where that is allowed, so you don't have to do that youeself.
 
 It also describes functions for manipulating homogenous vectors.  OpenGL likes thee a lot; they are the principak means of communcating with the GPU.
@@ -272,6 +273,10 @@ typed/opengl/generated/gl_specs.inc is an inclusion that includes all the defini
 This provides the types of the Racket opengl functions.  It dies this by including generated/gl-specr.inc after defining a bunch of macros that are heavily used.  It does the include with an (include "generated/gl_specs.inc") and the included file has no special #lang intro.
 
 TODO: Can I do similar with my scribble problems?
+  
+#### pict3d/typed/opengl/readspec.rkt
+
+This reads the standards-ommittee-provided .spec files from the specfiles directory and generates the Racket versins of them.
 
 #### pict3d/typed/opengl/utils.rkt
 
@@ -279,8 +284,134 @@ This provies a bunch of typed functions that deal in strings, GL versions, innte
 
 * This is the first time I've seen code in the pict3D repository that I've seen code relating to textures.
   * It looks as if textures were once disabled because of a problem with typed racket.  THey got re-enabled "two years ago" (as of Nov 18, 2019).
-  
-#### pict3d/typed/opengl/readspec.rkt
 
-This reads the standards-ommittee-provided .spec files from the specfiles directory and generates the Racket versins of them.
+2019 12 20
 
+this utils.rkt looks to ne==be the next thing I hve to figure out in bottom-up order.
+
+It provides:
+
+gl-get-string
+         gl-version
+         gl-shading-language-version
+         gl-extensions
+         gl-has-extension?
+         gl-version-at-least?
+         gl-core-profile?
+         gl-type?
+         gl-vector->type
+         gl-vector->length
+         gl-vector->type/cpointer
+         gl-vector->type/cpointer/length
+         gl-type->ctype
+         gl-type-sizeof
+         gl-type-alignof
+         gl-vector-sizeof
+         gl-vector-alignof
+         bitmap->texture
+         load-texture
+         load-shader
+         create-program
+
+(: split-spaces (-> String (Pairof String (Listof String))))
+??
+
+(: gl-get-string (->* [Integer] [Natural] String))
+returns a string describing soe aspect og=f the GL implementation.
+
+gl-version-hash
+
+(: parse-version-string (-> String Natural))
+    converts a erino-tring to a natural numner.
+gl-ersion
+    returns the versino as a natural number
+
+(: gl-shading-language-version-hash (HashTable GL-Context<%> Natural))
+
+(: parse-shading-language-version-string (-> String Natural))
+
+(: gl-shading-language-version (-> Natural))
+
+(: gl-extensions-hash (HashTable GL-Context<%> (Setof Symbol)))
+
+(: gl-extensions (-> (Setof Symbol)))
+
+(: gl-has-extension? (-> Symbol Boolean))
+
+(: gl-version-at-least? (-> Natural Boolean))
+
+(: gl-core-hash (HashTable GL-Context<%> Boolean))
+;;
+
+(: gl-core-profile? (-> Boolean))
+??
+
+(define gl-types
+  (make-hasheqv 
+   (list (cons GL_UNSIGNED_BYTE _uint8)
+         (cons GL_BYTE _sint8)
+         (cons GL_UNSIGNED_SHORT _uint16)
+         (cons GL_SHORT _sint16)
+         (cons GL_UNSIGNED_INT _uint32)
+         (cons GL_INT _sint32)
+         (cons GL_FLOAT _float)
+         (cons GL_DOUBLE _double)))
+a hashtable assigning types to the integer GL uses to identify types.
+?? Are these Racket types?
+
+(: gl-type? (-> Integer Boolean))
+Sees if the integer is a key in the gl-types hashtable.
+
+(: gl-vector->type (-> GLVector Integer))
+?? Seems to provide an OpenGL type encoded as integer from the GLVector.
+?? What is a GLVector?  Presumable a Racket handle for something GL knows?
+
+(: gl-vector->length (-> GLVector Index))
+
+(: gl-vector->type/cpointer (-> GLVector (Values Integer CPointer)))
+
+
+
+(: gl-vector->type/cpointer/length (-> GLVector (Values Integer CPointer Index)))
+
+(: gl-type->ctype (-> Integer CType))
+(: gl-type-sizeof (-> Integer Index))
+(: gl-type-alignof (-> Integer Index))
+(: gl-vector-sizeof (-> GLVector Index))
+(: gl-vector-alignof (-> GLVector Index))
+
+;;; Utility functions for dealing with textures
+
+;; Convert argb -> rgba, and convert to pre-multiplied alpha.
+;; (Non-premultiplied alpha gives blending artifacts and is evil.)
+;; Modern wisdom is not to convert to rgba but rather use 
+;; GL_BGRA with GL_UNSIGNED_INT_8_8_8_8_REV. But that turns out not
+;; to work on some implementations, even ones which advertise
+;; OpenGL 1.2 support. Great.
+
+(: argb->rgba! (-> Bytes Void))
+Rearranges the pixel format in an array pf bytes, presumably representing pixels.
+
+(: bitmap->texture (-> (Instance Bitmap%) [#:mipmap Any] [#:repeat (U 'none 'x 'y 'both)] Natural))
+;; Convert a Racket bitmap into an OpenGL texture (with lots of default settings)
+TODO: thi is a long function with subfunctions.  Probably worth looking at as an example of dealing with OpenGL compleications.
+
+(: load-texture (-> Path-String [#:mipmap Any] [#:repeat (U 'none 'x 'y 'both)] Natural))
+
+;;; Utility functions for dealing with shaders
+TODO: figure out what this all means.
+
+(: get-shader-parameter (-> Natural Integer Integer))
+(: get-shader-info-log (-> Natural String))
+(: get-program-parameter (-> Natural Integer Integer))
+(: get-program-info-log (-> Natural String))
+(: load-shader-source (-> Natural Input-Port Void))
+(: load-shader (-> (U Path-String Input-Port) Natural Natural))
+(: create-program (-> Natural * Natural))
+
+TODO: Picr3D uses shaders.  Where are they?  Can they be jiggered to talk to textures?  Are they perhaps already capable if dealing with textures, although the higher-level code doesn't ddo anything with textures?
+
+pict3d/private/engine/shader/shader.rkt seems to contain the shaders, or perhaps, components of shaders still to be put together.
+And the shader code seems related to .../shader/serialize-vertices.rkt
+
+Why is shader.rkt writen in plain racker, but shader-code on tyepd racket?
