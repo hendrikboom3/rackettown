@@ -317,7 +317,8 @@ gl-get-string
 ??
 
 (: gl-get-string (->* [Integer] [Natural] String))
-returns a string describing soe aspect og=f the GL implementation.
+returns a string describing some aspect of the GL implementation.
+See https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetString.xhtml
 
 gl-version-hash
 
@@ -409,9 +410,59 @@ TODO: figure out what this all means.
 (: load-shader (-> (U Path-String Input-Port) Natural Natural))
 (: create-program (-> Natural * Natural))
 
-TODO: Picr3D uses shaders.  Where are they?  Can they be jiggered to talk to textures?  Are they perhaps already capable if dealing with textures, although the higher-level code doesn't ddo anything with textures?
+TODO: Picr3D uses shaders.  Where are they?  Can they be jiggered to talk to textures?  Are they perhaps already capable of dealing with textures, although the higher-level code doesn't do anything with textures?
 
 pict3d/private/engine/shader/shader.rkt seems to contain the shaders, or perhaps, components of shaders still to be put together.
 And the shader code seems related to .../shader/serialize-vertices.rkt
 
-Why is shader.rkt writen in plain racker, but shader-code on tyepd racket?
+TODO: Why is shader.rkt writen in plain racket, but shader-code in tyepd racket?
+
+2019 12 21
+
+#### serialize-vertices.rkt
+
+A bunch of functions to put different things into buffers.
+They appear to check for buffer overflow, but don't do anything about it
+except for raising an error,
+Except for serialize-byte and serialize-bytes, which do no such check.
+They are presumably intended to be called only from the other functions that do check.
+
+#### shader-code.rkt
+
+There are a series of attribute functions, presumably to give GL shader attributes names and define them to openGL.
+
+Then there's a struct partial-code.  It seems to provide some kind of a manifest for shader code, to be used by Racket to keep track of what it's doing.
+partial-code does seem to be a tree struture, in that it "includes" a list of partial-code.  It might contain the actual code in its definitions field, which is a Listof String.
+
+There are funtions to recursively run through the partial-code tree structure and collect things from it.
+
+Ther are to have a lot of shader code fragments, stored as text, coded as strings delimited by #<<code and terminated by just the word code.  These code pieces seem to be built into something like large-scale abstract syntax, presumaby to be unravelled before being passed to OpenGL.
+
+The tree traversal would appear to be done the functions
+  (: partial-code-all-includes (-> partial-code (Listof partial-code)))
+  
+  (: partial-code->string/no-includes (-> partial-code String))
+  
+  (: partial-code->string (-> partial-code String))
+(: shader-code->string (-> shader-code String))
+(: standard-uniform->pair (-> standard-uniform (Pair String Symbol)))
+(: partial-code-standard-uniform-pairs (-> partial-code (Listof (Pair String Symbol))))
+(: partial-code-all-in-attributes (-> partial-code (Listof attribute)))
+(: partial-code-plain-in-attributes (-> partial-code (Listof attribute)))
+(: vertex-code-vao-struct (-> vertex-code vao-struct))
+
+
+Then there are "convenience functions"
+
+that make partial code, make-vertex-code, make-geometry-code, make-fragment-code
+
+And then the "programs"
+
+the actual struct declarations for program code, and make-program-code.
+TODO: where is the structure declaration for the other code?
+
+And then a big list (yes, a list) for program-code-shaders.
+
+And a "standard shader library"
+
+Here's where we find the actual code blocks.
