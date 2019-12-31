@@ -419,7 +419,7 @@ TODO: Why is shader.rkt writen in plain racket, but shader-code in tyepd racket?
 
 2019 12 21
 
-#### serialize-vertices.rkt
+#### pict3d/pict3d/private/engine/shader/serialize-vertices.rkt
 
 A bunch of functions to put different things into buffers.
 They appear to check for buffer overflow, but don't do anything about it
@@ -427,16 +427,19 @@ except for raising an error,
 Except for serialize-byte and serialize-bytes, which do no such check.
 They are presumably intended to be called only from the other functions that do check.
 
-#### shader-code.rkt
+#### pict3d/pict3d/private/engine/shader/shader-code.rkt
+
+The real work of opengl seems to be done in shaders nowadays.
+So pict3d contains a raft of functions to keep track of shaders, and a library of specific shaders.
 
 There are a series of attribute functions, presumably to give GL shader attributes names and define them to openGL.
 
 Then there's a struct partial-code.  It seems to provide some kind of a manifest for shader code, to be used by Racket to keep track of what it's doing.
 partial-code does seem to be a tree struture, in that it "includes" a list of partial-code.  It might contain the actual code in its definitions field, which is a Listof String.
 
-There are funtions to recursively run through the partial-code tree structure and collect things from it.
+There are functions to recursively run through the partial-code tree structure and collect things from it.
 
-Ther are to have a lot of shader code fragments, stored as text, coded as strings delimited by #<<code and terminated by just the word code.  These code pieces seem to be built into something like large-scale abstract syntax, presumaby to be unravelled before being passed to OpenGL.
+There are to have a lot of shader code fragments, stored as text, coded as strings delimited by #<<code and terminated by just the word code.  These code pieces seem to be built into something like large-scale abstract syntax, presumaby to be unravelled before being passed to OpenGL.
 
 The tree traversal would appear to be done the functions
   (: partial-code-all-includes (-> partial-code (Listof partial-code)))
@@ -444,12 +447,12 @@ The tree traversal would appear to be done the functions
   (: partial-code->string/no-includes (-> partial-code String))
   
   (: partial-code->string (-> partial-code String))
-(: shader-code->string (-> shader-code String))
-(: standard-uniform->pair (-> standard-uniform (Pair String Symbol)))
-(: partial-code-standard-uniform-pairs (-> partial-code (Listof (Pair String Symbol))))
-(: partial-code-all-in-attributes (-> partial-code (Listof attribute)))
-(: partial-code-plain-in-attributes (-> partial-code (Listof attribute)))
-(: vertex-code-vao-struct (-> vertex-code vao-struct))
+  (: shader-code->string (-> shader-code String))
+  (: standard-uniform->pair (-> standard-uniform (Pair String Symbol)))
+  (: partial-code-standard-uniform-pairs (-> partial-code (Listof (Pair String Symbol))))
+  (: partial-code-all-in-attributes (-> partial-code (Listof attribute)))
+  (: partial-code-plain-in-attributes (-> partial-code (Listof attribute)))
+  (: vertex-code-vao-struct (-> vertex-code vao-struct))
 
 
 Then there are "convenience functions"
@@ -466,3 +469,85 @@ And then a big list (yes, a list) for program-code-shaders.
 And a "standard shader library"
 
 Here's where we find the actual code blocks.
+
+
+
+The standard shader library:
+
+Each entry seems to be the value of a Racket identifier, and contains
+  * a string that is presumably a name used for identification and lookup by the Racket code,
+  * a list of pieces o actual shader code as a code block (presumably a string).
+
+Many have Racket names constructed by replacing underscores by hyphens and appending "-code".
+The 
+* matrix-code -- Shader code fragments for matrix handling
+  * "matrix"
+    rows2mat4x3, a2p, linear_inverse, affine_inverse
+
+Next are a bunch of definitions defining shader code.
+Most has a Racket name consisting of the shader-code name with underscores replaced by hyphens and followed by "-code".
+
+* model-vertex-code
+  * "model-vertex"
+  * get_model_transform
+* rect-code
+  * "rect"
+  * struct rect
+* output-2d-rect-vertex-code
+  * "output-2d-rect-vertex"
+    output_2d_rect_vertex
+
+Similarly,
+
+* output-unit-cube-vertex-code
+* output-unit-quad-vertex-code
+
+* float-constants-code
+  pos-infinity, neg-infinty, epsilon
+* impostor-bounds-code -- What are immpostor bounds?
+  Seems to be various upper and lower bounds, clipping, etc.
+  But what is the 8-element array 'vs' for?
+  
+* output-impostor-vertex-code -- ???
+
+* pack-unpack-normal-code -- These all seem to be coordinate transformations
+  * pack-unpack-normal
+    signNotZero
+    float32x3_to_oct -- oct seems to be an octahedron, possibly a stand-in for a sphere.
+    oct_to_float32x3
+    snorm12x2_to_unorm8x3
+    unorm8x3_to_snorm12x2
+    oct_to_float32x3
+    snorm12x2_to_unorm8x3
+    unorm8x3_to_snorm12x2
+    unpack_normal
+    pack_normal
+
+* depth-fragment-code
+  * "depth-fragment"
+  float get_frag_depth, get_view_depth
+
+* surface-code
+  "surface"
+  struct surface
+
+* get-surface-fragment-code
+  "get-surface-fragment"
+  get_surface
+
+Different kinds of surface reflectivity
+
+* light-fragment-code
+  frag_coord_to_position, attenuate_invsqr_quad, specular, output_light
+* output-mat-fragment-code
+  output_mat
+* output-opaq-fragment-code
+  output_opaq
+* output-tran-fragment-code
+  output_tran(
+* unpack-emitted-code
+  unpack_emitted
+* ray-trace-fragment-code "ray-trace-fragment"
+  frag_coord_to_direction, unit_sphere_intersect, unit_disk_intersect, unit_cylinder_intersect
+* rgb-hsv-code
+  rgb_to_hsv, hsv_to_rgb
