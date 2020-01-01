@@ -1,3 +1,7 @@
+This is an experiment in proedural generation.  I'm trying to figure out how to pass parameters down from bigger objects to smaller objects to produce both local consistency and variety.
+
+If you want to do more than read this code, you'll have to get yourself an implementation of the prpgramming language "Racket": https://racket-lang.org/
+
 # What works
 
 door.rkt draws the facade of a a row of three-story houses. usually with somw shrubs in front.
