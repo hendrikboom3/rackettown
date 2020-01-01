@@ -454,6 +454,7 @@ The tree traversal would appear to be done the functions
   (: partial-code-plain-in-attributes (-> partial-code (Listof attribute)))
   (: vertex-code-vao-struct (-> vertex-code vao-struct))
 
+2019 12 29
 
 Then there are "convenience functions"
 
@@ -551,3 +552,8 @@ Different kinds of surface reflectivity
   frag_coord_to_direction, unit_sphere_intersect, unit_disk_intersect, unit_cylinder_intersect
 * rgb-hsv-code
   rgb_to_hsv, hsv_to_rgb
+
+
+2019 12 30
+
+It looks like I'm really going to have to learn more about the shader language to understand how it is embedded into Racket.
