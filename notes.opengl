@@ -1,0 +1,39 @@
+Reading https://www.khronos.org/opengl/wiki/Shader
+
+There are "uniform" values.
+  They can be statically uniform or dynamically uniform.
+
+Shaders have access to a wide variety of resources. They can access Textures, uniforms, uniform blocks, image variables, atomic counters, shader storage buffers, and potentially other information.
+
+https://www.khronos.org/opengl/wiki/GLSL_Object
+
+"sre explicit not part of any" expicit should be explicitly
+
+glCreateProgram() creates a program object that is still to be filled with code.
+
+glCreateShader(..) creates a shader object.
+
+There are Program Pipeline objects.  Not quite clear what they're for yet.
+
+https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)
+
+There's no recursion in shader functions.
+
+functino parameters are value-return.
+Keywords in, out, and inout.
+
+https://www.khronos.org/opengl/wiki/Vertex_Shader
+
+User-defined input values to vertex shaders are sometimes called "vertex attributes". Their values are provided by issuing a drawing command while an appropriate vertex array object is bound
+
+Use layout qualifiers if you want to have control how they are laid out.
+(Cold this be related to their arrangement in the arguments to mat in triangles-01.rkt?
+
+https://www.khronos.org/opengl/wiki/Face_Culling
+GL_CULL_FACE must first be enabled with glEnable.
+To select which side will be culled, use the following function:
+void glCullFace(GLenum mode​);
+
+https://www.khronos.org/opengl/wiki/Fragment_Shader
+
+Use locatio(layout to specify he positions of the fragment output variables.

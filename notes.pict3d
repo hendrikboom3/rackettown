@@ -557,3 +557,39 @@ Different kinds of surface reflectivity
 2019 12 30
 
 It looks like I'm really going to have to learn more about the shader language to understand how it is embedded into Racket.
+
+2020 02 04
+
+Happy New Year
+
+Time to look at Racket packages again.  THis tim searching for ones that relate to opengl.
+
+get-bonus: an ancient looking experiment in 2-D video games by Jay McCarthy.
+    fails to compile
+
+glm: mthematics for GLSL, the OpenGL shading language.  A lot of vector and matrix math.
+
+glsl: the OpenGL shader language.  Compiles and passes tests.  Has a missing dependency.  Not clear what this does.  It seems to define a concrete and/or abstract syntax, likely for glsl.  Not clear what this is for; opengl takes shader code as strings, so why would Racket need shader parse trees?
+
+graphics-engine:  has failing tests.  Not aat all clear what this is supposed to do.  The documentation just says "Helo world".  The first example I looked at doesn'f seem to require anythong within the graphics-engine package.  But it is an example how to draw a triangle.
+  It depeds on glsl, so maybe it'a a clus as to what glsl does.
+  
+mode-lambda: a 2d sprite-based graphics engine.  Passes its tests, a blessed relief.  And there's actually documentation.
+
+opengl:  Compiles, but has failing test (possibly because an automated tester doesn't have any graphics output mechanism?) Machine-generated OpenGl bindings,  Contains some utilities for managing bitmaps and the like,
+  TODO:  Is this just an untyed version of opengl/typed foud in pict3d?
+
+pict3d:  Compiles, but ails tests. 3d graphis base on solid modelling, but without intersection of difference, and without textures.
+
+pict3d-die-cut:  Generates text and 2-D shapes from paths.  Presumably makes them for use in pict3d.
+
+pict3d-orig: same as pict3d, but a much older version.
+
+vulcan:  low-level bindig for vulkan, a new graphics system to replace opegl.
+
+
+I might possible learn to use some 3D in Racket by looking at the examples in the opengl package.  It might lead to insights for the documentatino and use of pict3d.  Or it might completely obviate this pict3d project.
+
+-- hendrik
+
+I wonder why pict doesn't seem to be on the list of Racket packages on https://pkgs.racket-lang.org/index.html

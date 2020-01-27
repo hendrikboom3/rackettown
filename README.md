@@ -132,8 +132,14 @@ brief notes on various 3d-related packages in the racket package library.  A lot
 
 I'm starting to think it may turn out to be easier to do my 3D stuff directly in opengl and ignore all the solid-modelling tools in other packages.  A sad coment on the ease of modifying other software.
 
-## pict3d.notes
+## notes.pict3d
 
-Doing this in 3D likely needs textures.  I caan't just have one image paint over another, the way I do using pict.  pict3d does not do textures.  pict3d.notes is the rsult of my current investigation into pict3d, in an attempt to understand enough to add texture-mapping.
+Doing this in 3D likely needs textures.  I caan't just have one image paint over another, the way I do using pict.  pict3d does not do textures.  notes.pict3d is the result of my current investigation into pict3d, in an attempt to understand enough to add texture-mapping.
+
+notes.pict3d may look like it's written in markdown, but it isn't.  It's a hodge-podge of notation and I doubt hauling it through markdown would make it any more readable.
 
 Current source repository for pict3d turns out to be https://pkgs.racket-lang.org/package/pict3d
+
+## opengl.notes:
+
+THis project is slowly turning into my reintroduction to opengl.  I may aandon pict3d altogether.
