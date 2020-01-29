@@ -4,7 +4,7 @@
 (require racket/random)
 (require colors)
 
-set-brightness
+; set-brightness is a built-in pict function I might need sometime for colour schemes
 
 (define (show tag thing) (print (cons tag thing)) thing)
 
@@ -327,10 +327,10 @@ set-brightness
 
 (define (decorate1 w h base)
   (define yf (random))
-  (print yf)
+  ; (print yf)
   (define y (* h yf))
   (define x ( + ( * w yf (random)) (* 0.5 w ( - 1.0 yf))))
-  (print (list 'w w 'h h 'yf yf 'x x 'y y))
+  ; (print (list 'w w 'h h 'yf yf 'x x 'y y))
   (pin-over base x y (ornament (* w 0.2)))
   )
 
@@ -343,6 +343,62 @@ set-brightness
   (decorate 4 w h (colorize (itri w h) "darkgreen"))
   )
 
+#|
+  Branching trees are built in two passes.
+  First, a branchinh skeleton is built tree structure of coordinates.
+  Then, the tree is drawn according to this with branches and leaves.
+  The original plan was to pass over the skeleton twoce, once to draw branches
+    and another time to cover them with leaves.
+  However, it seems to work fine with one pass.
+  I should decide whether to eliminate building the skeleton
+    or find other uses for it.
+
+  Or course, the wnole process should be further parametrized so as to produce
+    different kinds of trees.
+|#
+
+(define (branch a len n) ; TODO: make this draw something.  And have some parameters, even a list for different recursion depths
+  (if (or (<= n 0) #;( < (random) 0.8)) '()
+      (let ((ranbranch (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len 0.5) (- n 1))))
+            (ranbranch2 (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len (random)) (- n 1))))
+            )
+        (list
+         (* len (sin a)) (* len (cos a))
+         (ranbranch2) (ranbranch2) (ranbranch2) (ranbranch2) (ranbranch2) (ranbranch2)
+                             )
+        )
+      ))
+
+
+(define (brpict br)
+  (if (null? br) (disk 20 #:draw-border? #f #:color "darkgreen")
+      (letrec (
+               (iter (λ (base brl)
+                       (if (null? brl)
+                           base
+                           (iter
+                            (if (null? (car brl))
+                             (pin-over base -10 -10 (brpict (car brl)))
+                             (pin-over base 0 0 (brpict (car brl)))
+                             )
+                            (cdr brl))
+                           )
+                       ))
+               )
+        (let (
+              (base (pip-line (car br) (cadr br) 0))
+              (twigs (iter (blank) (cddr br)))
+              )
+          (pin-over base (car br) (cadr br) twigs)
+          )
+        )
+      ))
+
+
+(define (rantree) (inset (colorize (brpict (branch pi 100 3)) "white") 200 200 200 0))
+; TODO: calculate a proper bounding box.
+; guessing 200 isn't enough.
+
 (define (shrub)
   (random-ref (list
                (filled-ellipse
@@ -351,12 +407,18 @@ set-brightness
                  #:color (random-ref '("green" "lightgreen" "darkgreen"))
                  )
                (random-ref (list
-                           (colorize (itri 100 200) "darkgreen")
-                           (xmas 100 200)))
+                           (colorize (itri 100 200) "darkgreen") ; TODO: vary dimensions
+                           (xmas 100 200))) ; TODO: vary dimensions
+               (rantree)
                )
               )
   )
 
+#;(define (branch s n) ; TODO: make this draw something.  And have some parameters, even a list for ifferent recursion depths
+  (if (or (<= n 0) ((random) < 0.8)) '()
+      (branch s (- n 1))
+      ))
+                      
 (define (ran-tl-superimpose base l) ; superpose the elements of l at random points along the bottom of base.
   (if
    (pair? l)
@@ -409,11 +471,11 @@ set-brightness
 
 (show-pict (scale (scene alist) 0.5))
 
-(define e1 0)
-(define e2 0)
-(define e3 0)
+;(define e1 0)
+;(define e2 0)
+;(define e3 0)
 
-(define (rantest)
+#;(define (rantest)
          (for ([i (in-range 1 10000)])
            (let ((c (random-ref '(u v w))))
              (if (eq? c 'u) (set! e1 (+ e1 1))
@@ -422,5 +484,5 @@ set-brightness
                          '()
                          ))))))
 
-(rantest)
+;(rantest)
 
