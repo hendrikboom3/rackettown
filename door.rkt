@@ -355,11 +355,13 @@
 
   Or course, the wnole process should be further parametrized so as to produce
     different kinds of trees.
+
+  And I need to give the trunks some width.
 |#
 
 (define (branch a len n) ; TODO: make this draw something.  And have some parameters, even a list for different recursion depths
   (if (or (<= n 0) #;( < (random) 0.8)) '()
-      (let ((ranbranch (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len 0.5) (- n 1))))
+      (let ((ranbranch (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len (random)) (- n 1))))
             (ranbranch2 (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len (random)) (- n 1))))
             )
         (list
@@ -371,7 +373,7 @@
 
 
 (define (brpict br)
-  (if (null? br) (disk 20 #:draw-border? #f #:color "darkgreen")
+  (if (null? br) (disk 30 #:draw-border? #f #:color "darkgreen")
       (letrec (
                (iter (λ (base brl)
                        (if (null? brl)
@@ -395,9 +397,9 @@
       ))
 
 
-(define (rantree) (inset (colorize (brpict (branch pi 100 3)) "white") 200 200 200 0))
+(define (rantree) (inset (colorize (brpict (branch pi (* 200 (+ 0.5 (random))) 3)) "brown") 200 300 200 0))
 ; TODO: calculate a proper bounding box.
-; guessing 200 isn't enough.
+; guessing 200 or 300 isn't enough.
 
 (define (shrub)
   (random-ref (list
@@ -435,6 +437,7 @@
                       (list (shrub) (shrub)) ; TODO: varying numners of shrubs, occasional constraints on shrub statistics
                       ))
 (define (upstairs a) (www a))
+
 (define (building aaa) (let ((aa (freezea 'wall aaa)))
                         (let ((a (freezea 'style aa)))
                        (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a)) (lookup 'wall a (lambda () 'black)) )
@@ -453,7 +456,7 @@
                            "lightgray:" "darkgray"
                            "brown" "lightbrown" "darkbrown"
                            "black"))
-
+(define (random-colour) (make-color (random 256) (random 256) (random 256)))
 
 
 (define alist (list
@@ -461,28 +464,12 @@
       (cons 'doorheight 200 )
       (cons 'colour (lambda (a) (random-ref colours)))
       (cons 'highlight (lambda (a) (random-ref colours)))
-      (cons 'wall (lambda (a) (random-ref colours)))
+      #;(cons 'wall (lambda (a) (random-ref colours)))
+      (cons 'wall (lambda (a) (random-colour)))
       (cons 'style (lambda (a) (random-ref '(paned framed)))) ; 'plain is also a window style, but I won't choose it.
     )
 )
 
-; (lookup 'colour alist (lambda(a) "gray"))
+(show-pict  (scale (scene alist) 0.5))
 
-
-(show-pict (scale (scene alist) 0.5))
-
-;(define e1 0)
-;(define e2 0)
-;(define e3 0)
-
-#;(define (rantest)
-         (for ([i (in-range 1 10000)])
-           (let ((c (random-ref '(u v w))))
-             (if (eq? c 'u) (set! e1 (+ e1 1))
-                 (if (eq? c 'v) (set! e2 (+ e2 1))
-                     (if (eq? c 'w) (set! e3 (+ e3 1))
-                         '()
-                         ))))))
-
-;(rantest)
 
