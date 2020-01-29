@@ -361,16 +361,15 @@
 
 (define (branch a len n) ; TODO: make this draw something.  And have some parameters, even a list for different recursion depths
   (if (or (<= n 0) #;( < (random) 0.8)) '()
-      (let ((ranbranch (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len (random)) (- n 1))))
-            (ranbranch2 (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len (random)) (- n 1))))
+      (let (
+            (ranbranch (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len (random)) (- n 1))))
             )
         (list
          (* len (sin a)) (* len (cos a))
-         (ranbranch2) (ranbranch2) (ranbranch2) (ranbranch2) (ranbranch2) (ranbranch2)
+         (ranbranch) (ranbranch) (ranbranch) (ranbranch) (ranbranch) (ranbranch)
                              )
         )
       ))
-
 
 (define (brpict br)
   (if (null? br) (disk 30 #:draw-border? #f #:color "darkgreen")
@@ -397,7 +396,7 @@
       ))
 
 
-(define (rantree) (inset (colorize (brpict (branch pi (* 200 (+ 0.5 (random))) 3)) "brown") 200 300 200 0))
+(define (rantree) (inset (colorize (brpict (branch pi (* 150 (+ 0.5 (random))) 3)) "brown") 200 300 200 0))
 ; TODO: calculate a proper bounding box.
 ; guessing 200 or 300 isn't enough.
 
@@ -415,11 +414,6 @@
                )
               )
   )
-
-#;(define (branch s n) ; TODO: make this draw something.  And have some parameters, even a list for ifferent recursion depths
-  (if (or (<= n 0) ((random) < 0.8)) '()
-      (branch s (- n 1))
-      ))
                       
 (define (ran-tl-superimpose base l) ; superpose the elements of l at random points along the bottom of base.
   (if
