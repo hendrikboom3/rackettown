@@ -1,8 +1,10 @@
-This is an experiment in proedural generation.  I'm trying to figure out how to pass parameters down from bigger objects to smaller objects to produce both local consistency and variety.
+# Rackettown
 
-If you want to do more than read this code, you'll have to get yourself an implementation of the prpgramming language "Racket": https://racket-lang.org/
+This is an experiment in procdural generation.  I'm trying to figure out how to pass parameters down from bigger objects to smaller objects to produce both local consistency and variety.  My intention here is described in the file 'attributes.txt.  But that file describes a dream, not an achieved reality.
 
-# What works
+If you want to do more than read this code, you'll have to get yourself an implementation of the programming language "Racket": https://racket-lang.org/
+
+## What works
 
 door.rkt draws the facade of a a row of three-story houses. usually with somw shrubs in front.
 
@@ -13,11 +15,11 @@ gen.txt prints out some one-sentence quests.
 None of this code is stable, and will almost certainly change incompatibly.
 If you use any of it, make and use your own copy; otherwise things will likely break when I update this put from under you.
 
-All of this README (and a lot of the comments in the code) is written in a personal style.  That's just the way I tend to work, writing what I'm trying to do informally long before I implement anything.  My code is sometimes saturated with comments explaining what I'm trying to do rather than what I'm doing.
+All of this README (and a lot of the comments in the code) is written in a very nal style.  That's just the way I tend to work, writing what I'm trying to do informally long before I implement anything.  My code is sometimes saturated with comments explaining what I'm trying to do rather than what I'm doing.
 
-I'm not embarrassed anout making mistakes (or typos) either.  I know that the road to success is paved with mistakes.  Let me know if you find anything wrong or stupid or that could be improved.
+I'm not embarrassed anout making mistakes (or typos) either.  I know that the road to success is paved with mistakes.  Let me know if you find anything wrong or stupid or that could be improved. hendrik@topoi.pooq.com.  And put [RACKETTOWN] at the start of the subject line so I'll know it's not spam. and will pay extra attention to it.
 
-# About door.rkt
+## About door.rkt
 
 This is, on the face of it, a program to draw facades of buildings with somewhat random windows and doors.  Even as just this, it is deficient in many ways.  It doesn't have enough range of coordinated colours (it doesn't even know how to coordinate colours), and there are far too few kinds of windows, door handles, mailbox slots (actually none of these latter).
 
@@ -78,7 +80,7 @@ I haven't even enough experience with the application to figure out what the rig
 
 What my current recursive passing down assocation lists doesn't do:
 
-* Impose constraints on subobject
+* Impose constraints on subobjects.
 * Have style libraries that can be activated on several independent objects.
 * Have regional styles that are different for various areas but admit exceptions.
 
@@ -87,7 +89,7 @@ Nor do I
 * Deal with floor plans instead of facades
 * Do any kind of space subdivision that isn't hierarchical rectangles.
 
-# About matcher and gen
+## About matcher and gen
 
 These are seemingly independent of door, certainly at present.
 
@@ -142,4 +144,4 @@ Current source repository for pict3d turns out to be https://pkgs.racket-lang.or
 
 ## opengl.notes:
 
-THis project is slowly turning into my reintroduction to opengl.  I may aandon pict3d altogether.
+This project is slowly turning into my reintroduction to opengl.  I may aandon pict3d altogether.
