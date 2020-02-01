@@ -1,0 +1,62 @@
+# Attributes
+
+This project is an experiment in attribute management in proceduran generation of content.
+
+There are several subproject here, but the one getting the most attenrion at the moment is the generation of pictures of an urban landscape.  At the moment it's just a picture of a row of three-story houses with a few trees in front.  I'd like to go fully 3D with this.
+
+I've done procedural generation of countryside with rivers before.  @todo{ insert link here }. There there were two important attribute: river connectivity and altitude, but they were handled in a compleely ad-hoc manner.  The mani concern there was handling spatial regions.
+
+Hierarchical recursive data structures are common in computing, because they are easy to code.  And they're easy to handle in a city environment, especiallt one that is laid out in a grid of rectangles with nombered streets metting numbered avenues at right angles.
+
+With the facades of buildings (which is the example I'm currently following in Rackettown) this rectangular subdivisin works fairly well.  Buildings can be rectangles (especially with square roofs), windows are rectabgles, and may be divided into ractangular panes, doors are rectangles and may have rectangulat mail slots and windows, and so forth.  Easy peasy.
+
+But there has to b variation to prevent the project from gettng rather boring.  (Granted a lot of suburban architecture *is* boring.)  At the moment the code makes random choices about window style (framed, paned, or not), wall colours, door colours, etc.  Now a building usually has mostly one style of windows in the whole building, perhaps with very few variations.  Perhaps there is one picture window (currently not implemented).  Perhaps the sindow in the door is plain plate glass, where those in the living room are made of leaded glass panes.  The recursive generation process has to cater to both uniformity and variation.
+
+It would seem that each of these decisions could be made at different specific levels of recursive subdivision.  But there are variations in this too.  Some municipalities, for example, require all doors in a city block to be painted exactly the same colour.  These colours can vary from block to block.  And there may be no such restrictions on other blocks.
+
+So there are areas with attributes.  The attributes on subdivision may depend on other attributes in the larger scale.  And the places where attributes are (randomly?) chosen may depend on those and other attributes as well.  (There may be room for some programming language design here, this I'm not that far yet.)
+
+Where I lived in Montreal, for example, the city forbade aluminum railing on front porches.  But wood and cast iron were OK.  It was some kind of heritage naighbourhood.  In other neighbourhoods there were no such restrictions, or perhaps different restrictions because of different heritage)
+
+So the places in the recursion where choices are made themselved depend on ragional decisions.  Or perhaps environmental or historical factors.
+
+## An implementation.
+
+In the rackettown code, each kind of region is described by program code (in the Racket programming language; that's why I called the project Rackettown).  That program code takes as funtion argument an association list mapping attribute names (which are Racker symbols) to values.  The value may itself be a function; such a function can be called when a more speciic value for the attribute is required.
+
+There's a freeze operation that takes an association list and an attribute name.  If the attribute is paired with a function it calls the function and binds the attribute name to the value retuned by the function.  So at levels in the hierachy where decisinos hae to be made I use this freeze operation.  And yes, the new bound value may also be a function, leading to a multistage narrowing down of possibilities.
+
+By the way, freezing does not modify the association list (which might be used in different branches of the hierarchy as well); to bind the new value it simply make the new list by prefixes a new attribute/value pair to the existing list.
+
+## Nonrectangularity.  Fudged hierarchy.
+
+With numerical coordinates for locations, the natural hierarchical geometry is recursively nested squares.  This may work for Manhattan city blocks, but it's a poor approximation to nature.  So for countryside I had to find a way to fudge the border between squares during refinenent.
+
+What I did was to recognise that there are two orthogonal-ish ways of orienting a square:  the normal way, and tilted 45 degrees as a kind of diamond.  In refinement to a finer grid, I broke the squares into triangles along diagonals and then merged pairs of triangles back into squares whose area was half the area of the previous grid.  Mow that merging required that I reconcile the attributes that had been chosen on the two triangles to produce the attributes on the new square.  Choosing these attributes to preserve continuity across boundaries was an important and tricky part of the design of the pandscape generator.
+
+I do not yet have a good mechanism for merging two association lists.  I suspect this may have to be done separately for each attribute.  And it's not at all clear how to merge functions.  Call both ane interpolate for numerical values?  Randomo choise of functions for symblic attributes?  Union or intersection of sets of possibilities?  And what about probability distributions?
+
+## Generalize
+
+So we have regions.  They may be spatial, temporal or abstract.  They get subdivided into subregions, and may even get merged again.  (But the merging process has to be limited so that it does not entirely subdivisions and block progress.)
+
+These regions have attributes.  Those attributes are determined partially by random choice and partially by attributes from larger-scale regions.
+(in the case of the diagonal squares built from triangles (which are smaller) I ies the attributes as descending fro the larger squares that were decomposed into triangles).
+
+The process of writing generation code for a particular application involves deciding what kinds of regions there are, how regions are split and merged, what attributes they have, how these attributes depend on other attributes, and deciding the conditions and places in the hierarchy where decisions are made.
+
+## Pseudorandom seeds
+
+When a landscape gets large, it may be impossible to store it in memory all at once.  Yet in a game where there is freedom of movement, one may leave a region and go to another, giving the programmer the option of freeing the memory associated with the old region.  But the player may decide to go back; whereupon the first region will have to be regenerated just the way it was.  This could be done if the random seed for the region were preserved.  Thus each temporarily discardable region should be generated entirely from a random seed (or a limited collection of seeds).  Taken recursively, this indicates a *tree* of random seeds matching the tree structure of regions.  So we'd want a ramdom number generator that generates a tree of random numbers instead of the usual sequence.  Oh yes, where regions are merged, we'd need a method of merging those seeds.  It's rather easy to set this up by ad-hoc means (for example using a conguential rendom number generator for random numbers on the same level but then exclusive-oring these numbers with vrious integers to generate seeds for lower levels).  As far as I know, no one has yet done any theoretical work on the statistitical behaviour of trees of pseuderandom numbers instead of sequences of them.
+
+So the random seed for a region is this just another attribute.  (Not yet implemented in Rackettown)
+
+## Storage limitations.
+
+I've already hit memory capacity limits in Rackettown.
+
+Granted, the main limitation I it was just teh default limitation of DrRacket to 128megabutes of memory, which is nothing compared to todays memory capacities.  But I hit the limit whan generating branching trees (like oaks and maples, not data structures).  Even with few (and perhaps unrealistically low) numbers of branching, the exponential growth was too much.  If I'm hitting this limit on a scene as simple as the one I've got, I'll be in trouble with larger, more realistic scenery, even with a larger memory.
+
+It looks as if I may bave to abandon using Racket's Pict graphics (which uses a tree structure in memory to store a scene before rendering it) and start with the stored deterministic pseudorandom seeds, generating the scene while drawing it to opengl.  Yes, using those stored seeds long before I have a player that leaves a region for another.
+
+
