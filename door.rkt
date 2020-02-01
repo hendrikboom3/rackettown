@@ -371,23 +371,26 @@
         )
       ))
 
-(define (brpict br)
-  (if (null? br) (disk 30 #:draw-border? #f #:color "darkgreen")
+;(define leafcolour "darkgreen")
+(define leafcolour (make-color 0 128 0 0.25))
+
+(define (brpict br w)
+  (if (null? br) (disk 50 #:draw-border? #f #:color leafcolour)
       (letrec (
                (iter (λ (base brl)
                        (if (null? brl)
                            base
                            (iter
                             (if (null? (car brl))
-                             (pin-over base -10 -10 (brpict (car brl)))
-                             (pin-over base 0 0 (brpict (car brl)))
+                             (pin-over base -25 -25 (brpict (car brl) ( / w 1.4)))
+                             (pin-over base 0 0 (brpict (car brl) ( / w 1.4)))
                              )
                             (cdr brl))
                            )
                        ))
                )
         (let (
-              (base (pip-line (car br) (cadr br) 0))
+              (base (linewidth w (pip-line (car br) (cadr br) 0)))
               (twigs (iter (blank) (cddr br)))
               )
           (pin-over base (car br) (cadr br) twigs)
@@ -396,7 +399,7 @@
       ))
 
 
-(define (rantree) (inset (colorize (brpict (branch pi (* 150 (+ 0.5 (random))) 3)) "brown") 200 300 200 0))
+(define (rantree) (inset (colorize (brpict (branch pi (* 150 (+ 0.5 (random))) 5) 15) "brown") 200 300 200 0))
 ; TODO: calculate a proper bounding box.
 ; guessing 200 or 300 isn't enough.
 

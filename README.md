@@ -15,9 +15,9 @@ gen.txt prints out some one-sentence quests.
 None of this code is stable, and will almost certainly change incompatibly.
 If you use any of it, make and use your own copy; otherwise things will likely break when I update this put from under you.
 
-All of this README (and a lot of the comments in the code) is written in a very nal style.  That's just the way I tend to work, writing what I'm trying to do informally long before I implement anything.  My code is sometimes saturated with comments explaining what I'm trying to do rather than what I'm doing.
+All of this README (and a lot of the comments in the code) is written in a very informal style.  That's just the way I tend to work, writing what I'm trying to do informally long before I implement anything.  My code is sometimes saturated with comments explaining what I'm trying to do rather than what I'm doing.  They aren't even specificaions to be implemented -- they're hopes for the future.
 
-I'm not embarrassed anout making mistakes (or typos) either.  I know that the road to success is paved with mistakes.  Let me know if you find anything wrong or stupid or that could be improved. hendrik@topoi.pooq.com.  And put [RACKETTOWN] at the start of the subject line so I'll know it's not spam. and will pay extra attention to it.
+I'm not embarrassed anout making mistakes (or typos) either.  I know that the road to success is paved with mistakes.  Let me know if you find anything wrong or stupid or that could be improved. Email me at hendrik@topoi.pooq.com.  And put [RACKETTOWN] at the start of the subject line so I'll know it's not spam. and will pay extra attention to it.
 
 ## About door.rkt
 
