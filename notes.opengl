@@ -7,7 +7,7 @@ Shaders have access to a wide variety of resources. They can access Textures, un
 
 https://www.khronos.org/opengl/wiki/GLSL_Object
 
-"sre explicit not part of any" expicit should be explicitly
+typo: "are explicit not part of any" explicit should be explicitly
 
 glCreateProgram() creates a program object that is still to be filled with code.
 
@@ -19,7 +19,7 @@ https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)
 
 There's no recursion in shader functions.
 
-functino parameters are value-return.
+function parameters are value-return.
 Keywords in, out, and inout.
 
 https://www.khronos.org/opengl/wiki/Vertex_Shader
@@ -37,3 +37,18 @@ void glCullFace(GLenum mode​);
 https://www.khronos.org/opengl/wiki/Fragment_Shader
 
 Use locatio(layout to specify he positions of the fragment output variables.
+
+2018 01 31:
+
+From glsltriangles there's the line
+  (glVertexAttribPointer 0 2 GL_FLOAT #f 0 0)
+Accordint to https://web.archive.org/web/20150225192608/http://www.arcsynthesis.org/gltut/Basics/Tut01%20Following%20the%20Data.html
+this means:
+* 0: ???
+* 2: How many values specify a single datum.  In this case, two flating point values are the coordinates for a vartex.
+* GL_FLOAT:  The base type of the value -- 32-bit floating point 
+* #F: ???
+* 0: the spacing between each set of values.  In this cse, none.
+* 0: the byte offset in the buffer of the first object.  In tis case, the first obect is at the start.
+
+WHich buffer? tha one currently bound to GL_ARRAY_BUFFER
