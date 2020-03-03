@@ -52,3 +52,35 @@ this means:
 * 0: the byte offset in the buffer of the first object.  In tis case, the first obect is at the start.
 
 WHich buffer? tha one currently bound to GL_ARRAY_BUFFER
+
+2010 02 15
+
+http://www.opengl-tutorial.org/beginners-tutorials/tutorial-4-a-colored-cube/
+suggests very strongly that colours have to be in a different buffer from the vertices.
+Not what I remembered from a while ago.
+Seems unnecessarily awkward, keepint attributes so separated from the vertices.
+
+2010 02 24
+
+Stupid, stupid, stupid.
+
+It seems that my questions about using openGL are answered in the Red Book and I didn't notice.
+Why did I not realize to look there?
+Because most of my books became inaccessible abut three years ago when I moved from a three-storey hose to a one-storey condo, and I've gotten used to doing without them and using internet sources exclusively.
+
+So I finally ordered another copy.  This is much easier thatn going into the remote storage cell and actually *finding* my own copy.  The storage cell is many, many cubic metres of boxed junk.  And valuable stuff, which is unfortunately mixed intimately with the junk.  This whole situation makes it clear that I do have to go there and throw out the junk someday.  I don't want that task to fall to the executor of my estate.
+
+I've started reading the epub version (paper copy on the way).  Epub isn't all that convenient for technical stuff, though it's just great for novels.  It has no idea how to format C++ code.  Or maybe my ebook screen isn't wide enough and I get too many line-wraps for the formatting to show well.  And it's even worse for mathematics.
+
+2010 03 02
+
+My paper redbook came.
+I've downloaded the source code for the examples into ~/dv/redbook/OGLPG-9th-Edition/
+
+Within that directory, the example source code resides in src; the include files are in include, and the C++ source code for the other files the source code relies on are in lib.
+
+In particular, LoadShaders in in lib.
+
+Now I caan start to experiment with using modern opengl directly.
+
+.

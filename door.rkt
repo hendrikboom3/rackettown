@@ -8,6 +8,8 @@
 
 (define (show tag thing) (print (cons tag thing)) thing)
 
+(show 'start 'now)
+
 ; TODO:
 
 ; Colour coordination based on hue, saturation and brightness?  Or some other kind of colour wheel theory?
@@ -229,7 +231,7 @@
           ; 10 isn't meant to be realistic.  It's meant to be ridiculous as a way of showing that something is wrong in the picture.
           [height (lookup 'height a (lambda () 10))]
           [style (lookup 'style a (lambda () 'paned))]
-          [background (make-color 80 120 100)]
+          [background  (make-color 80 120 100)]
           (border-colour "white")
 	)
      ; (show 'framed style) (show 'width width) (show 'height height)
@@ -313,9 +315,14 @@
       ]
     (define fw (bind 'width ( * width 0.9 ) (bind 'height (* height 0.45 ) window)))
     (define space 40)
-    (define facade (random-ref (list
-                 (ht-append (nodoor a) (ht-append space (blank)  (fw a) (fw a) (fw a) (blank))) ; TODO: silly redundancy
-                 )))
+    (define facade (ht-append (nodoor a)
+                              (random-ref (list
+                                           (ht-append space (blank)  (fw a) (fw a) (fw a) (blank))
+                                            (ht-append space (blank)  (ht-append (fw a) (fw a)) (fw a) (blank))
+                                             (ht-append space (blank)  (fw a) (ht-append (fw a) (fw a)) (blank))
+                                           )
+                                          ; nodoor is called to impose proper height to the storey.
+                                          )))
     (define facade2 (vc-append (spacer a) facade))
     (over-background facade2 wall)
   )
@@ -356,10 +363,12 @@
   Or course, the wnole process should be further parametrized so as to produce
     different kinds of trees.
 
-  And I need to give the trunks some width.
+  TODO: Only one pass?
+  TODO: rememenber the skeleton for redrawing in animation.
+  TODO:  Of course animation requires a *lot* of ramdomness to be kept or reproducilby recomputed.
 |#
 
-(define (branch a len n) ; TODO: make this draw something.  And have some parameters, even a list for different recursion depths
+(define (branch a len n) ; TODO: Have some parameters, even a list for parameters at different recursion depths
   (if (or (<= n 0) #;( < (random) 0.8)) '()
       (let (
             (ranbranch (λ () (branch ( + a ( * 2.0 ( - (random) 0.5))) ( * len (random)) (- n 1))))
@@ -372,10 +381,12 @@
       ))
 
 ;(define leafcolour "darkgreen")
-(define leafcolour (make-color 0 128 0 0.25))
+(define (leafcolour) (make-color 0 ( + 100 (random 50)) 0 0.25))
+
+(define (shrubcolour) (make-color 0 ( + 100 (random 100)) 0 1.0))
 
 (define (brpict br w)
-  (if (null? br) (disk 50 #:draw-border? #f #:color leafcolour)
+  (if (null? br) (disk 50 #:draw-border? #f #:color (leafcolour))
       (letrec (
                (iter (λ (base brl)
                        (if (null? brl)
@@ -408,7 +419,7 @@
                (filled-ellipse
                  (random 60 120) ( random 60 120)
                  #:draw-border? #f
-                 #:color (random-ref '("green" "lightgreen" "darkgreen"))
+                 #:color #;(random-ref '("green" "lightgreen" "darkgreen")) (shrubcolour) ;; (leafcolour) was too transparent for shrubs
                  )
                (random-ref (list
                            (colorize (itri 100 200) "darkgreen") ; TODO: vary dimensions
@@ -417,8 +428,11 @@
                )
               )
   )
-                      
-(define (ran-tl-superimpose base l) ; superpose the elements of l at random points along the bottom of base.
+
+; The following function comes in two forms -- one that places the list items to only three places in front of the base,
+; and one that places them anywhere along the bse.  We'll see which turns out to be more useful.
+; I don't intend to keep both.
+(define (ran-tl-superimpose base l) ; superpose the elements of l at up to three random points along the bottom of base.
   (if
    (pair? l)
    (ran-tl-superimpose
@@ -428,22 +442,44 @@
    base)
   )
 
+(define (rran-tl-superimpose base l) ; superpose the elements of l at random points along the bottom of base.
+  (if
+   (pair? l)
+   (let ((dx ( - (* (random) (pict-width base)) ( / (pict-width (car l)) 2))) (dy ( - (pict-height base) (pict-height (car l)))))
+     (rran-tl-superimpose
+      (pin-over base dx dy (car l) )
+      (cdr l))
+     )
+   base
+   )
+  )
 
 (define (groundfloor a)
-  (ran-tl-superimpose (dww a) ; TODO: more variety in witdhs and windows of buildings
-                      (list (shrub) (shrub)) ; TODO: varying numners of shrubs, occasional constraints on shrub statistics
-                      ))
+  (dww a)
+  )
 (define (upstairs a) (www a))
 
-(define (building aaa) (let ((aa (freezea 'wall aaa)))
-                        (let ((a (freezea 'style aa)))
-                       (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a)) (lookup 'wall a (lambda () 'black)) )
-                                        )))
+(define (building aaa)
+  (let ((aa (freezea 'wall aaa)))
+    (let ((a (freezea 'style aa)))
+      (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a))
+                       (lookup 'wall a (lambda () 'black))
+                       )
+      )))
+
 (define (street a) ((hor
                     (list (fuzz 'doorheight building) (fuzz 'doorheight building) (fuzz 'doorheight building)
                           (fuzz 'doorheight building) (fuzz 'doorheight building)
                     )) a))
-(define (scene a) (over-background (outerframe 100 "orange" (street a)) "darkgrey") )
+
+(define (planted-street a)
+ (rran-tl-superimpose (street a) ; TODO: more variety in witdhs and windows of buildings
+                      (list (shrub) (shrub)(shrub) (shrub)(shrub) (shrub)(shrub) (shrub)(shrub) (shrub)) ; TODO: varying numners of shrubs, occasional constraints on shrub statistics
+                      ; TODO: the trees are being chopped at building boundaries
+                      ; TODO: place the trees on the street instead of on the building
+                      ))
+
+(define (scene a) (over-background (outerframe 100 "orange" (planted-street a)) "darkgrey") )
 
 ; Test cases
 
@@ -467,6 +503,11 @@
     )
 )
 
+(define the-scene (scene alist))
+
+(show 'start 'drawing)
+
 (show-pict  (scale (scene alist) 0.5))
 
+(show 'done 'drawing)
 

@@ -144,4 +144,4 @@ Current source repository for pict3d turns out to be https://pkgs.racket-lang.or
 
 ## opengl.notes:
 
-This project is slowly turning into my reintroduction to opengl.  I may aandon pict3d altogether.
+This project is slowly turning into my reintroduction to opengl.  I may abandon pict3d altogether.
