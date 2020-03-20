@@ -21,6 +21,9 @@
 ;   And then just having a function is quite useless, functions
 ;   being opaque in Scheme,
 
+; And I need to worry about transparency for windows.
+; At the moment, windows are drawn on top of walls.
+; If I were to make them transparent, they would show the wall behind instead of being a hole in the wall.
 
 ; Attributes need to have constraints -- such as a list of colours to choose from,
 ; And we may need to further restrict choices, possibly with a list of current possibilities.
@@ -28,7 +31,7 @@
 ;   Or adjust probabilities.
 
 ; And sizes, such as length and width, need to be different.
-; I'd like to be able to pass in size ranges.  and let the details of an image depend on whether they fit,
+; I'd like to be able to pass in size ranges.  and let the details of an image depend on what fits,
 ;   with the possibility if not producing an image at all if it's not possible.
 
 ; There's a lot of inconsistency about whether to explicitly pass associationlists as parameters.
@@ -40,13 +43,23 @@
 ; The low-level drawing code needs to know what is to be drawn; it takes this from an association list.
 ; The higher-level combiners need to manipulate functions that take an association list and produce functions that take association lists.
 
-
+; ---
 
 ; Attribute management
 
-; ali is an environment.  It should contain all the parameters that are neede to make a typical whatever (at the moment, the whatever is a door.)
-; At the moment, also, it allows attributes to be defined as functions
-;   at lookup time the entire association list is passed to the function so that its value can depend on other (not necessarily previous) parameters.
+; Attributes are stored in an associationist.  I suspect that Racket's parameters would do as sell for the present system.
+; And this mechansim works well when the territories I am generating recursively do not overlap.
+; But I expect them to overlap in future application,
+; and then I am going to have to invent some mechanism for merging two association lists in some way.
+; I do no tknow what mechanism will be appropriate, but association ilsts will likely leave me more flexibility than Racket's parametere.
+
+
+; ali is an environment.  It should contain all the parameters that are needed to make a typical whatever
+; (at the moment, the whatevers are a row of buildings and their components.)
+; It allows attributes to be defined as functions.
+;   at lookup time the entire association list is passed to the function
+;   so that its value can depend on other (not necessarily previous) parameters.
+
 
 (define (looker name ali succeed fail)
   (letrec (
@@ -71,6 +84,7 @@
 (define (lookup name ali fail)
   (looker name ali (lambda (result) result) fail)
 )
+
 (define (old lookup name ali fail)
   (letrec (
       (lookup2 (lambda (name aa fail)
@@ -100,8 +114,9 @@
 )
 
 ; Freezing is a mechanism for choosing parameters to be passed down to more local objects
-;   so, for example, we can set a style for all the windows in a house, but allow each house to have its own style for windows.
-;   This is accomplished by having the window-style be a function instead of a value.  The freeze calls the function and rebids the name to the result of that function.  The resulting associon list is passed down to lower objects.
+;   so, for example, we can set some styles for all the windows in a neighbourhood, but allow each house to have its own style for windows.
+;   This is accomplished by having the window-style be a function instead of a value.
+;   The freeze calls the function and rebids the name to the result of that function.  The resulting associon list is passed down to lower objects.
 
 (define (freezea name a)
   (let ((value (lookup name a (lambda () '()))))
@@ -162,6 +177,7 @@
 (define ( vert l )
   ; l is a list of drawing functions (that take an alist as parameter)
   ; (vert l) returns a drawing function (that takes an alist as parameter)
+  ; and draws a stacl of the objects described by l.
   (if (cons? l)
     (if
       (null? (cdr l))
@@ -177,9 +193,11 @@
 	
 
 (define (horsep count object spacer a) ; object and spacer are functions taking alists.
-  (if (equal? count 1) (object a) ; TODO: zero case
+  ; returns an object consisting of count instances ot object separated by instances of spacer laid out horizontally.
+  (if (equal? count 1) (object a)
+      (if (equal? count 0) (blank)
     (ht-append (object a) (spacer a) (horsep ( - count 1 ) object spacer a))
-  )
+  ))
 )
 
 (define (horsepp count object spacer)
@@ -187,13 +205,14 @@
   )
 
 (define (spacer a)
-  (blank 40 40)
+  (blank 40 40) ; TODO: 40 should be an argument
   ; (filled-rectangle 40 40 #:color "white")
   )
 
 ; Geometry
 
 (define (itri w h)
+  ; A triangle.  Used to draw evergreen trees.
   (define (draw dc dx dy)
     (define path (new dc-path%))
     (send path move-to 0 h)
@@ -267,22 +286,23 @@
 	    )
 	    (pin-over
 	      (pin-over
-		   (filled-rectangle width height #:color (lookup 'colour a (lambda(a) "gray")))
+		   (filled-rectangle width height #:color (lookup 'colour a (lambda(a) "gray"))) ; the door itself
                (* width 0.05)	(* height 0.025)
-		(window (binda 'style 'paned (binda 'width ( * width 0.9 ) (binda 'height (* height 0.45 ) a))))
+		(window (binda 'style 'paned (binda 'width ( * width 0.9 ) (binda 'height (* height 0.45 ) a)))) ; the window in the door
 	      )
 	    (* width 0.85) (* height 0.6)
-	    (disk ( * width 0.10) #:color (random-ref '("yellow" "white"))))
+	    (disk ( * width 0.10) #:color (random-ref '("yellow" "white")))) ; the doorknob
 	)
 )
 
 (define (over-background facade colour)
+  ; provide a coloured background for facade extending to its width and height.  (is this its bounding box?)
     (pin-over (filled-rectangle (pict-width facade) (pict-height facade) #:draw-border? #f #:color colour)
               0 0
               facade)
   )
 
-(define (dww a)
+(define (dww a) ; a door and two windows, in varying configurations
   (let
       [
        (width
@@ -299,12 +319,12 @@
                  (ht-append space (blank) (fw a) (fw a) (door a) (blank))
                  (ht-append space (blank) (ht-append (fw a) (fw a)) (door a) (blank))
                  )))
-    (define facade2 (vc-append (spacer a) facade))
-    (over-background facade2 wall)
+    (define facade2 (vc-append (spacer a) facade)) ; the storey extends above the windows and doors.
+    (over-background facade2 wall) ; Give it a background colour
   )
 )
 
-(define (www a)
+(define (www a) ; A floor with three windows
   (let
       [
        (width
@@ -318,8 +338,8 @@
     (define facade (ht-append (nodoor a)
                               (random-ref (list
                                            (ht-append space (blank)  (fw a) (fw a) (fw a) (blank))
-                                            (ht-append space (blank)  (ht-append (fw a) (fw a)) (fw a) (blank))
-                                             (ht-append space (blank)  (fw a) (ht-append (fw a) (fw a)) (blank))
+                                           (ht-append space (blank)  (ht-append (fw a) (fw a)) (fw a) (blank))
+                                           (ht-append space (blank)  (fw a) (ht-append (fw a) (fw a)) (blank))
                                            )
                                           ; nodoor is called to impose proper height to the storey.
                                           )))
@@ -363,9 +383,9 @@
   Or course, the wnole process should be further parametrized so as to produce
     different kinds of trees.
 
-  TODO: Only one pass?
-  TODO: rememenber the skeleton for redrawing in animation.
-  TODO:  Of course animation requires a *lot* of ramdomness to be kept or reproducilby recomputed.
+  TODO: Can it be only one pass?
+  TODO: remember the skeleton for redrawing in animation.
+  TODO: Of course animation requires storing or reproducibly computing a *lot* of randomness.
 |#
 
 (define (branch a len n) ; TODO: Have some parameters, even a list for parameters at different recursion depths
@@ -429,24 +449,13 @@
               )
   )
 
-; The following function comes in two forms -- one that places the list items to only three places in front of the base,
-; and one that places them anywhere along the bse.  We'll see which turns out to be more useful.
-; I don't intend to keep both.
-(define (ran-tl-superimpose base l) ; superpose the elements of l at up to three random points along the bottom of base.
-  (if
-   (pair? l)
-   (ran-tl-superimpose
-    ((random-ref (list ltl-superimpose ctl-superimpose rtl-superimpose)) ; TODO: more variety in location.
-     base (car l))
-    (cdr l))
-   base)
-  )
 
-(define (rran-tl-superimpose base l) ; superpose the elements of l at random points along the bottom of base.
+
+(define (ran-tl-superimpose base l) ; superpose the elements of l at random points along the bottom of base.
   (if
    (pair? l)
    (let ((dx ( - (* (random) (pict-width base)) ( / (pict-width (car l)) 2))) (dy ( - (pict-height base) (pict-height (car l)))))
-     (rran-tl-superimpose
+     (ran-tl-superimpose
       (pin-over base dx dy (car l) )
       (cdr l))
      )
@@ -457,29 +466,31 @@
 (define (groundfloor a)
   (dww a)
   )
+
 (define (upstairs a) (www a))
 
 (define (building aaa)
-  (let ((aa (freezea 'wall aaa)))
-    (let ((a (freezea 'style aa)))
-      (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a))
-                       (lookup 'wall a (lambda () 'black))
-                       )
-      )))
+  (let* (
+         (aa (freezea 'wall aaa))
+         (a (freezea 'style aa))
+         )
+    (over-background (vc-append (upstairs a) (upstairs a) (groundfloor a))
+                     (lookup 'wall a (lambda () 'black))
+                     )
+    ))
 
 (define (street a) ((hor
-                    (list (fuzz 'doorheight building) (fuzz 'doorheight building) (fuzz 'doorheight building)
+                    (list (fuzz 'doorheight building) (fuzz 'doorheight building)
                           (fuzz 'doorheight building) (fuzz 'doorheight building)
                     )) a))
 
 (define (planted-street a)
- (rran-tl-superimpose (street a) ; TODO: more variety in witdhs and windows of buildings
+ (ran-tl-superimpose (street a) ; TODO: more variety in witdhs and windows of buildings
                       (list (shrub) (shrub)(shrub) (shrub)(shrub) (shrub)(shrub) (shrub)(shrub) (shrub)) ; TODO: varying numners of shrubs, occasional constraints on shrub statistics
                       ; TODO: the trees are being chopped at building boundaries
-                      ; TODO: place the trees on the street instead of on the building
                       ))
 
-(define (scene a) (over-background (outerframe 100 "orange" (planted-street a)) "darkgrey") )
+(define (scene a) (over-background (outerframe 100 "orange" (planted-street a)) "darkgrey") ) ; why the orange?  For visibility whe debugging?
 
 ; Test cases
 
