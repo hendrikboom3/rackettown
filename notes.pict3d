@@ -1,4 +1,19 @@
+   
+# Notes on pict3d
+
+The definitive source code is at https://pkgs.racket-lang.org/package/pict3d
+Pict3d has its own opengl binding that's for typed racket.
+See source code for this.
+
+Default:
+  git://github.com/jeapostrophe/pict3d
+for racket 6.1.1. AND 6.2
+  git://github.com/jeapostrophe/pict3d#for-racket-v6.2.1
+
+Package description at https://pkgs.racket-lang.org/package/pict3d
+
 # Notes here on figuring out pict3d.
+
 
 What is has to do:
 

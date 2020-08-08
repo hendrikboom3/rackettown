@@ -24,7 +24,7 @@ pict3d
 
 It's not clear hos pict3d and pict3d-orig are related.  It's possible pict3d-orig is an older version, and the studying it may yield insights into pict3d.  Or one may just have a few bug-fixes over the other,
 
-pict3d.notes contains my notes on pict3d, insofar as I've discovered anything.
+notes.pict3d contains my notes on pict3d, insofar as I've discovered anything.
 
 voxel -- voxe space progrmming -- Seems ralated to js-voxel, but I'm not sure how.
 

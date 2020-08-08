@@ -81,6 +81,31 @@ Within that directory, the example source code resides in src; the include files
 
 In particular, LoadShaders in in lib.
 
-Now I caan start to experiment with using modern opengl directly.
+Now I can start to experiment with using modern opengl directly.
 
-.
+2010 03 05
+
+Had a lot of trouble with opengl in the last few days, both before and after redbook.
+Yesterday I installed a new version of Racket -- the current regular release instead of the dauly build from last year.
+
+And now all the variations on my code I was trying to see where my problems were suddently just worked.
+
+Looks like the packages I was installing may have been suffering from version skew.
+
+2020 03 08
+
+I've been following the red book, rewriting their C++ examples into Racket,
+and have discovered that even the simplest openGL programs there use current
+features of openGL that are absent from the Racket version.
+
+This surprised me, because the Racket binding is machine-generated from
+specfiles from Khronos.
+
+Turns out that as of June 2013 the specfiles are no longer being produced.
+Instead, there's a whole new XML-based file format for this information.
+So updateing the Racket binding is going to be nore substantial than just
+replaceing the specfiles with new ones.
+
+Looking into it.
+
+This is starting to be a very different project than I originally expected.

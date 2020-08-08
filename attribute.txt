@@ -8,17 +8,17 @@ There's also a 'freezing' method that calls any attribute function
 and rebinds the attribute name to the resulting value (which may itself be a function).
 
 Now I think it may be a good idea to
-  * aattach attributes to the class of entities that use them
+  * attach attributes to the class of entities that use them
   * attach attributes to the class of entities that freeze them
-  * enable duch entities to pass parameters.
+  * enable such entities to pass parameters.
   * explicilty express that attributes functions can use the values of other attributes, whether frozen or not.
   * Ideally this could involve a static check, but that's unlikely unless I start to design an entire attribute language, which I'm not about to do (yet).  I do like the flexibility of using Racket.
   * I'd like the be able to use typed attribution in typed Racket, but I'm not ready for that yet.  The only reason I'm currently using an untyped language is that the current attribute mechanism can produce attributes with a variety of types.
 
 Someday, when I start having serious hierarchical geometrical territory management, territories can overlap.  Then I'm going to have to somehow merge to attribute sets from the different merged territories.  I do not yet have the experience to be able to do that,  But that's one of the things this project is intended to solve.  Some simplistic ideas:
-  * A randoom choice betwee the attribute sets.
+  * A random choice betwee the attribute sets.
   * A random choice for each attribute
   * Bind each attribute to a function that produces a random choice between the merged territories.
   * Instead of a random choice, somekind of interpolation for numerical attributes.
 
-Bote that the "territorries" can be abstract entities not related to physical space, sucn as species that interbreed. (No, the definition of species is that they don't interbreed, but there are ligers and in fantiasy worlds there are centaurs)
+Note that the "teritorries" can be abstract entities not related to physical space, sucn as species that interbreed. (No, the definition of species is that they don't interbreed, but there are ligers and in fantasy worlds there are centaurs)

@@ -4,11 +4,11 @@ This project is an experiment in attribute management in proceduran generation o
 
 There are several subproject here, but the one getting the most attenrion at the moment is the generation of pictures of an urban landscape.  At the moment it's just a picture of a row of three-story houses with a few trees in front.  I'd like to go fully 3D with this.
 
-I've done procedural generation of countryside with rivers before.  @todo{ insert link here }. There there were two important attribute: river connectivity and altitude, but they were handled in a compleely ad-hoc manner.  The mani concern there was handling spatial regions.
+I've done procedural generation of countryside with rivers before.  @todo{ insert link here }. There there were two important attribute: river connectivity and altitude, but they were handled in a compleely ad-hoc manner.  The main concern there was handling spatial regions.
 
 Hierarchical recursive data structures are common in computing, because they are easy to code.  And they're easy to handle in a city environment, especiallt one that is laid out in a grid of rectangles with nombered streets metting numbered avenues at right angles.
 
-With the facades of buildings (which is the example I'm currently following in Rackettown) this rectangular subdivisin works fairly well.  Buildings can be rectangles (especially with square roofs), windows are rectabgles, and may be divided into ractangular panes, doors are rectangles and may have rectangulat mail slots and windows, and so forth.  Easy peasy.
+With the facades of buildings (which is the example I'm currently following in Rackettown) this rectangular subdivisin works fairly well.  Buildings can be rectangles (especially with square roofs), windows are rectabgles, and may be divided into rectangular panes, doors are rectangles and may have rectangular mail slots and windows, and so forth.  Easy peasy.
 
 But there has to b variation to prevent the project from gettng rather boring.  (Granted a lot of suburban architecture *is* boring.)  At the moment the code makes random choices about window style (framed, paned, or not), wall colours, door colours, etc.  Now a building usually has mostly one style of windows in the whole building, perhaps with very few variations.  Perhaps there is one picture window (currently not implemented).  Perhaps the sindow in the door is plain plate glass, where those in the living room are made of leaded glass panes.  The recursive generation process has to cater to both uniformity and variation.
 
@@ -18,7 +18,7 @@ So there are areas with attributes.  The attributes on subdivision may depend on
 
 Where I lived in Montreal, for example, the city forbade aluminum railing on front porches.  But wood and cast iron were OK.  It was some kind of heritage naighbourhood.  In other neighbourhoods there were no such restrictions, or perhaps different restrictions because of different heritage)
 
-So the places in the recursion where choices are made themselved depend on ragional decisions.  Or perhaps environmental or historical factors.
+So the places in the recursion where choices are made themselves depend on ragional decisions.  Or perhaps environmental or historical factors.
 
 ## An implementation.
 
