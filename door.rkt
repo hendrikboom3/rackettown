@@ -4,11 +4,16 @@
 (require racket/random)
 (require colors)
 
+(define winter #t)
+
 ; set-brightness is a built-in pict function I might need sometime for colour schemes
 
 (define (show tag thing) (print (cons tag thing)) thing)
 
 (show 'start 'now)
+
+; STATUS:  This version builds a tree of branch descriptions and recurses through it to
+;   build a tree as tree of picts.
 
 ; TODO:
 
@@ -367,7 +372,10 @@
                  )))
 
 (define (xmas w h)
-  (decorate 4 w h (colorize (itri w h) "darkgreen"))
+  (if winter
+      (decorate 4 w h (colorize (itri w h) "darkgreen"))
+      (colorize (itri w h) "darkgreen")
+      )
   )
 
 #|
@@ -406,7 +414,13 @@
 (define (shrubcolour) (make-color 0 ( + 100 (random 100)) 0 1.0))
 
 (define (brpict br w)
-  (if (null? br) (disk 50 #:draw-border? #f #:color (leafcolour))
+  ; br: a list of branches, each being a data struture returned by ranbranch, and not a pict
+  ; w:  width of main trunk of branch
+  (if (null? br)
+      (if winter
+          (blank)
+          (disk 50 #:draw-border? #f #:color (leafcolour))
+          )
       (letrec (
                (iter (λ (base brl)
                        (if (null? brl)
@@ -430,7 +444,13 @@
       ))
 
 
-(define (rantree) (inset (colorize (brpict (branch pi (* 150 (+ 0.5 (random))) 5) 15) "brown") 200 300 200 0))
+(define treecolour #;"brown" "darkbrown") ; TODO: darkbrown isn't a known colour
+   ; brown is too red, and black (which I get by defaut of darkbrown, is too black.
+   ; I'd like something maybe 3/4 of the way from brown to black.
+
+(define (rantree)
+  (inset (colorize (brpict (branch pi (* 150 (+ 0.5 (random))) 5) 15) treecolour)
+         200 300 200 0))
 ; TODO: calculate a proper bounding box.
 ; guessing 200 or 300 isn't enough.
 
@@ -441,9 +461,7 @@
                  #:draw-border? #f
                  #:color #;(random-ref '("green" "lightgreen" "darkgreen")) (shrubcolour) ;; (leafcolour) was too transparent for shrubs
                  )
-               (random-ref (list
-                           (colorize (itri 100 200) "darkgreen") ; TODO: vary dimensions
-                           (xmas 100 200))) ; TODO: vary dimensions
+               (xmas (random 125 150) (random 200 300))
                (rantree)
                )
               )
@@ -487,11 +505,12 @@
 (define (planted-street a)
  (ran-tl-superimpose (street a) ; TODO: more variety in witdhs and windows of buildings
                       (list (shrub) (shrub)(shrub) (shrub)(shrub) (shrub)(shrub) (shrub)(shrub) (shrub)) ; TODO: varying numners of shrubs, occasional constraints on shrub statistics
-                      ; TODO: the trees are being chopped at building boundaries
                       ))
 
-(define (scene a) (over-background (outerframe 100 "orange" (planted-street a)) "darkgrey") ) ; why the orange?  For visibility whe debugging?
-
+(define (scene a)
+  (over-background (outerframe 100 "orange" (planted-street a)) "darkgrey")
+  ; why the orange?  For visibility when debugging?
+  )
 ; Test cases
 
 (define colours '( "white" "red" "orange" "yellow" "chartreuse"

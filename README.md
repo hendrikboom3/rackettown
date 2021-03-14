@@ -6,11 +6,19 @@ If you want to do more than read this code, you'll have to get yourself an imple
 
 ## What works
 
-door.rkt draws the facade of a a row of three-story houses. usually with somw shrubs in front.
+door.rkt draws the facade of a a row of three-story houses. usually with somw shrubs or trees in front.
 
-matcher.rkt prints some invented potential murder reports.
+Current versions seem to be winterdoor and xmas.rkt, which are almost identical and should be further mmerged and parameterized.
+door.rkt, winterdoor, and xmas all build a tree of picts to represent a tree of branches.   And they even build another tree first and then translate it into thetree of picts.
+  (interdoor an cmas certainly do this.  Does door do it too?)
 
-gen.txt prints out some one-sentence quests.
+They can probably be replaced by some version of door3.rkt, which draws trees dynamically, without big storage requirement.
+
+The following are rudimntary to the popnt of silliness.
+
+* matcher.rkt prints some invented potential murder reports.
+
+* gen.txt prints out some one-sentence quests.
 
 None of this code is stable, and will almost certainly change incompatibly.
 If you use any of it, make and use your own copy; otherwise things will likely break when I update this put from under you.
@@ -20,6 +28,7 @@ All of this README (and a lot of the comments in the code) is written in a very 
 I'm not embarrassed anout making mistakes (or typos) either.  I know that the road to success is paved with mistakes.  Let me know if you find anything wrong or stupid or that could be improved. Email me at hendrik@topoi.pooq.com.  And put [RACKETTOWN] at the start of the subject line so I'll know it's not spam. and will pay extra attention to it.
 
 ## About door.rkt
+
 
 This is, on the face of it, a program to draw facades of buildings with somewhat random windows and doors.  Even as just this, it is deficient in many ways.  It doesn't have enough range of coordinated colours (it doesn't even know how to coordinate colours), and there are far too few kinds of windows, door handles, mailbox slots (actually none of these latter).
 
@@ -57,13 +66,15 @@ But I suspect the association lists may need other kinds of binding rather than 
 
 As for the instance of door generation I've built so far:
 Simply having width and height for a door isn't enough.
-Other things have dimensions.
+Other things have dimensions.  
 And things within things have context-dependent dimensions.
 At the moment I'm using hc-append and vc-append to *add* dimensions bottom-up.
 
 But if may be convenient to pass down contextual resource constraints, such as available area.  A door-drawer could key off that to determine door size.  Drawing code could simply refuse to draw if ther isn't enought space, forcing the context to consider alternatives.
 
 Maybe I need doorwidth and doorheight.
+
+TODO: make door.rkt draw during generation, and in 3D.  This is happening in the file door3.rkt
 
 TODO:  I could use a notation for parameterless functions and constant functions.
 e.g. (K foo) could be (lambda (a) foo)
